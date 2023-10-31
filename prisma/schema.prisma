@@ -1,0 +1,215 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+  branchManager
+  posOpearator
+  subAdmin
+  deliveryBoy
+}
+
+model User {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  email        String?     @unique
+  firstName    String?
+  lastName     String?
+  phoneNo      String?     @unique
+  role         Role[]      @default([user])
+  profileImage String?
+  Address      Address[]
+  isActive     Boolean     @default(true)
+  AddToCart    AddToCart[]
+}
+
+model OtpValidationEmail {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  email      String
+  secret     String
+  otp        String
+  countLimit Int    @default(0)
+}
+
+model OtpValidationPhone {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  phoneNo    String
+  secret     String
+  otp        String
+  countLimit Int    @default(0)
+}
+
+// model OtpValidation {
+//   id         String @id @default(auto()) @map("_id") @db.ObjectId
+//   phoneNo    String
+//   secret     String
+//   otp        String
+//   countLimit Int    @default(0)
+// }
+
+// model PasswordOtpValidation {
+//   id         String @id @default(auto()) @map("_id") @db.ObjectId
+//   email      String
+//   secret     String
+//   otp        String
+//   countLimit Int    @default(0)
+// }
+
+enum Status {
+  Active
+  Inactive
+}
+
+enum Label {
+  Home
+  Work
+  Other
+}
+
+model Address {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  address   String
+  apartment String
+  label     Label   @default(Home)
+  user      User?   @relation(fields: [userId], references: [id])
+  userId    String? @db.ObjectId
+}
+
+enum isFeatured {
+  Yes
+  No
+}
+
+model ProductCategory {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  image        String
+  isActive     Boolean        @default(true)
+  productTypes productTypes[]
+}
+
+model productTypes {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  image             String
+  productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
+  productCategoryId String          @db.ObjectId
+  products          Products[]
+  isActive          Boolean         @default(true)
+}
+
+type productDetails {
+  key   String
+  value String
+}
+
+model ProductAssets {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  front     String
+  back      String
+  left      String
+  right     String
+  product   Products? @relation(fields: [productId], references: [id]) // references `id` of `Profile`
+  productId String?   @unique @db.ObjectId
+}
+
+model Products {
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  shortDescription String
+  description      productDetails[]
+  image            ProductAssets?
+  ProductAssetsId  String           @unique @db.ObjectId
+  rating           Float?
+  ratingCount      Int              @default(0)
+  ProductType      productTypes     @relation(fields: [productTypeId], references: [id])
+  productTypeId    String           @db.ObjectId
+  isActive         Boolean          @default(true)
+  AddToCart        AddToCart[]
+  variant          Variants[]
+  branch           Branch           @relation(fields: [branchId], references: [id])
+  branchId         String           @db.ObjectId
+}
+
+enum Unit {
+  gm
+  kg
+  pcs
+  ml
+  ltr
+  pack
+  each
+}
+
+model Variants {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  unit       Unit
+  size       String?
+  price      Float
+  values     String
+  stock      Int
+  product    Products?  @relation(fields: [productsId], references: [id])
+  productsId String?    @db.ObjectId
+  AddToCart  AddToCart?
+}
+
+model AddToCart {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  product           Products  @relation(fields: [productId], references: [id])
+  productId         String    @db.ObjectId
+  quantity          Int
+  totalPrice        Int
+  user              User?     @relation(fields: [userId], references: [id])
+  userId            String?   @db.ObjectId
+  deviceToken       String?
+  isOrder           Boolean   @default(false)
+  selectedVariant   Variants? @relation(fields: [selectedVariantId], references: [id])
+  selectedVariantId String?   @unique @db.ObjectId
+}
+
+enum DiscountType {
+  Fixed
+  Percentage
+}
+
+model Coupon {
+  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  code               String
+  discount           Float        @default(0)
+  discountType       DiscountType @default(Fixed)
+  startDate          DateTime
+  endDate            DateTime
+  minimumOrderAmount Float
+  maximumDiscount    Float
+  limitPerUser       Int?
+  description        String
+  isActive           Boolean      @default(true)
+}
+
+model Admin {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String
+  password        String
+  confirmPassword String
+  role            Role[] @default([admin])
+}
+
+model Branch {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  phoneNo   String
+  latitude  String
+  longitude String
+  products  Products[]
+}
