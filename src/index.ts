@@ -15,7 +15,7 @@ const startServer = async () => {
   // Create an Express app and HTTP server; we will attach the WebSocket
   // server and the ApolloServer to this HTTP server.
   const app = express();
-  connectRedis();
+  // connectRedis();
   const httpServer = createServer(app);
 
   promoExpiery.start();
