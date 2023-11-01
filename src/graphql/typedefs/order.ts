@@ -24,7 +24,7 @@ type Order {
     orderType: OrderType
     address: Address
     deliveryAddressId: String
-    addCartId: AddToCart
+    addToCart: [AddToCart]
     cartId: String
     user: User
     userId: String
@@ -32,18 +32,35 @@ type Order {
     couponId: String
     paymentStatus: paymentStatusType
     paymentType: paymentMethod
-    orderAmount: String
+    orderAmount: Float
+}
+
+input deliveryAddress {
+    id: String
+    address: String
+    apartment: String
+    label: Label
+    pincode:Int
+
 }
 
 input placeOrderInput {
-
+    orderId: String
+    orderType: OrderType
+    address: deliveryAddress
+    addToCartId: [String]
+    userId: String
+    couponId: String
+    paymentStatus: paymentStatusType
+    paymentType: paymentMethod
+    orderAmount: Float
 }
 
 type placeOrderResponse {
-    
+    message:String
 }
 
 type Mutation {
-    placeOrder:( input: placeOrderInput!):placeOrderResponse
+    placeOrder(input: placeOrderInput!):placeOrderResponse
 }
 `;

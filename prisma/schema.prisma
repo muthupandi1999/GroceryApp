@@ -170,14 +170,15 @@ model AddToCart {
   product           Products  @relation(fields: [productId], references: [id])
   productId         String    @db.ObjectId
   quantity          Int
-  totalPrice        Int
+  totalPrice        Int?
   user              User?     @relation(fields: [userId], references: [id])
   userId            String?   @db.ObjectId
   deviceToken       String?
   isOrder           Boolean   @default(false)
   selectedVariant   Variants? @relation(fields: [selectedVariantId], references: [id])
   selectedVariantId String?   @unique @db.ObjectId
-  Order             Order[]
+  Order             Order?    @relation(fields: [orderId], references: [id])
+  orderId           String?   @db.ObjectId
 }
 
 enum DiscountType {
@@ -237,19 +238,18 @@ enum paymentStatusType {
 }
 
 model Order {
-  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
   orderId           String
   orderTime         DateTime
-  orderType         OrderType         @default(Placed)
-  address           Address?          @relation(fields: [deliveryAddressId], references: [id])
-  deliveryAddressId String?           @db.ObjectId
-  addCartId         AddToCart?        @relation(fields: [cartId], references: [id])
-  cartId            String?           @db.ObjectId
-  user              User?             @relation(fields: [userId], references: [id])
-  userId            String?           @db.ObjectId
-  coupon            Coupon?           @relation(fields: [couponId], references: [id])
-  couponId          String?           @db.ObjectId
-  paymentStatus     paymentStatusType @default(Pending)
-  paymentType       paymentMethod
-  orderAmount       String
+  orderType         OrderType   @default(Placed)
+  address           Address?    @relation(fields: [deliveryAddressId], references: [id])
+  deliveryAddressId String?     @db.ObjectId
+  addToCart           AddToCart[]
+  user          User?             @relation(fields: [userId], references: [id])
+  userId        String?           @db.ObjectId
+  coupon        Coupon?           @relation(fields: [couponId], references: [id])
+  couponId      String?           @db.ObjectId
+  paymentStatus paymentStatusType @default(Pending)
+  paymentType   paymentMethod
+  orderAmount   Int
 }

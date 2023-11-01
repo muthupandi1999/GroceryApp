@@ -8,6 +8,7 @@ export default `
     role: [Role]
     profileImage: String
     isActive:Boolean
+    address:[Address]
   }
 
   enum Role {
@@ -46,6 +47,7 @@ export default `
     firstName: String
     lastName: String
     profileImage: String
+    address:AddressInput
   }
 
   type Mutation {

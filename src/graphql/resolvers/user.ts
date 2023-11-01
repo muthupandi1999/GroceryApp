@@ -560,19 +560,34 @@ export default {
         where: { id: userId },
       });
       if (userExist) {
-        const { firstName, lastName, profileImage } = input;
+        let { firstName, lastName, profileImage, addressInput } = input;
+        let { apartment, address, label, pincode } = addressInput;
+        let addressCreate = await prisma.address.create({
+          data: {
+            address,
+            apartment: apartment,
+            label: label,
+            pincode: pincode,
+            user: { connect: { id: userId } },
+          },
+        });
         let userProfileUpdate: any = {
           ...(firstName ? { firstName: firstName } : {}),
           ...(lastName ? { lastName: lastName } : {}),
           ...(profileImage
             ? { profileImage: await photoUpload(profileImage) }
             : {}),
+          ...(addressInput
+            ? { address: { connect: { id: addressCreate.id } } }
+            : {}),
         };
         let updateUser = await prisma.user.update({
           where: {
             id: userId,
           },
+        
           data: userProfileUpdate,
+          
         });
         if (updateUser) {
           return {

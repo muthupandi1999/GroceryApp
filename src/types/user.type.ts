@@ -60,6 +60,7 @@ export type updateUserInput = {
   firstName?: string
   lastName?: string
   profileImage?: string
+  addressInput?:any
 }
 
 export interface JwtPayload {
