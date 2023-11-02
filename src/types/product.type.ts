@@ -51,6 +51,7 @@ export type CreateProductInput = {
   name: string;
   image: ProductimageAssets;
   shortDescription: string;
+  tagId?:string
   description: [productDetailsInput];
   variant: [variantsInput];
   branchId:string
@@ -67,6 +68,7 @@ export type UpdateProductInput = {
   image?: ProductimageAssets;
   description?: [productDetailsInput];
   units?: [variantsInput];
+  tagId?:string
   isActive?: boolean;
 };
 

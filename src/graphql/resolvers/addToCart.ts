@@ -17,7 +17,7 @@ export default {
       });
       
       let totalPrice = carts.reduce((acc: number, cartItem: any) => {
-        return acc + cartItem.selectedVariant.price;
+        return acc + cartItem.totalPrice;
       }, 0);
       return {
         carts: carts,

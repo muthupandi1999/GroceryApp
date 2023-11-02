@@ -59,8 +59,17 @@ input placeOrderInput {
 type placeOrderResponse {
     message:String
 }
+ 
+input productInfo {
+    id:ID!
+    productId:String
+    selectedVariantId: String
+    quantity:Int
+}
+
 
 type Mutation {
     placeOrder(input: placeOrderInput!):placeOrderResponse
+    updateCarts(input:[productInfo]):placeOrderResponse
 }
 `;

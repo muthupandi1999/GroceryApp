@@ -69,6 +69,7 @@ export default `
     shortDescription: String
     description: [productDetails]
     variant : [variants]
+    tag:String
     image : productImageAssets
     rating:Float
     ratingCount :Int            
@@ -84,6 +85,7 @@ export default `
     image: productImageAssetsInput
     shortDescription: String
     description: [productDetailsInput!]
+    tag:String
     variant: [variantInput!]
     branchId:String!
   }
@@ -97,12 +99,13 @@ export default `
     image: productImageAssetsInput
     variant: [variantUpdateInput]
     shortDescription: String
+    tag:String
     description: [productDetailsInput!]
   }
 
   type Query {
     getProduct(id: ID!): Products
-    getAllProducts: [Products]
+    getAllProducts(filter:String): [Products]
   }
 
   type Mutation {

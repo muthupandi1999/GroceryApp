@@ -29,8 +29,24 @@ export default {
 
       return product;
     },
-    getAllProducts: async (_: any, __: any, context: any) => {
+    getAllProducts: async (_: any, { filter }: { filter?: string }, context: any) => {
       let allproducts = await prisma.products.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: filter ? filter : "",
+                mode: "insensitive",
+              },
+            },
+            {
+              shortDescription: {
+                contains: filter ? filter : "",
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
         include: {
           ProductType: true,
           variant: true,
@@ -95,6 +111,7 @@ export default {
           shortDescription: input.shortDescription,
           description: input.description,
           variant: { connect: addOnResults.map((e: any) => ({ id: e.id })) },
+          tags: input.tagId ? { connect: { id: input.tagId } } : undefined,
           ProductType: { connect: { id: productTypeId } },
           ProductAssetsId: imageAssests.id,
           branch: { connect: { id: input.branchId } },
@@ -103,6 +120,7 @@ export default {
           ProductType: true,
           variant: true,
           image: true,
+          tags:true
         },
       });
     },
@@ -120,7 +138,7 @@ export default {
         },
       });
 
-      const { image, units, ...restInput } = input;
+      const { image, units, tagId, ...restInput } = input;
 
       if (existingProduct) {
         console.log("existingProduct", existingProduct);
@@ -234,7 +252,7 @@ export default {
 
         return await prisma.products.update({
           where: { id },
-          data: { ...restInput },
+          data: { tags: input.tagId ? { connect: { id: input.tagId } } : undefined,...restInput },
           include: {
             ProductType: true,
             variant: true,
