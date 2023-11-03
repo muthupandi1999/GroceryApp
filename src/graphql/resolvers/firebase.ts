@@ -2,45 +2,10 @@ import { prisma } from "../../config/prisma.config";
 import createGraphQLError from "../../errors/graphql.error";
 import { GraphQLError } from "graphql";
 import { verifyToken_api } from "../../validation/token.validation";
-
-import admin from "firebase-admin";
-
+import '../../config/firebase.config';
 import { getMessaging } from "firebase-admin/messaging";
-import { serviceAccount } from "../../services/service.account";
 import { JsonObject } from "../../scalars/json";
-
-const serviceAccountKey = {
-  privateKey: serviceAccount.private_key,
-  clientEmail: serviceAccount.client_email,
-  type: serviceAccount.type,
-  projectId: serviceAccount.project_id,
-  private_key_id: serviceAccount.private_key_id,
-  client_id: serviceAccount.client_id,
-  auth_uri: serviceAccount.auth_uri,
-  token_uri: serviceAccount.token_uri,
-  auth_provider_x509_cert_url: serviceAccount.auth_provider_x509_cert_url,
-};
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountKey),
-});
-
-type notificationInput = {
-  title: string;
-  body: string;
-};
-
-type sendPushNotificationToOne = {
-  token: string;
-  notification: notificationInput;
-  data: any;
-};
-
-type sendPushNotificationToMulti = {
-  tokens: string[];
-  notification: notificationInput;
-  data: any;
-};
+import { notificationInput, sendPushNotificationToOne, sendPushNotificationToMulti } from '../../types/firebase.type';
 
 export default {
   Mutation: {
@@ -58,8 +23,10 @@ export default {
           token,
           notification: { ...notification },
         };
+        console.log("🚀 ~ file: firebase.ts:26 ~ message:", message)
 
         const res = await getMessaging().send(message);
+        console.log("🚀 ~ file: firebase.ts:28 ~ res:", res)
 
         if (res) {
           return "Notification sent successfully";
