@@ -60,5 +60,6 @@ export default `
     deleteCouponById(id: ID!): Coupon!
     applyCouponByCode(code:String!, subTotal:Float, ):Float
   }
+
   
 `;

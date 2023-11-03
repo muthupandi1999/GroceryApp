@@ -4,6 +4,7 @@ import { GraphQLError } from "graphql";
 import { verifyToken_api } from "../../validation/token.validation";
 import { DateTime } from "../../scalars/date";
 import { DiscountType } from "../../types/enums";
+import { JsonObject } from "../../scalars/json";
 type CreateCouponInput = {
   name: string;
   code: string;
@@ -186,4 +187,5 @@ export default {
     },
   },
   DateTime,
+  
 };

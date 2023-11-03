@@ -134,8 +134,8 @@ model Products {
   ProductAssetsId  String           @unique @db.ObjectId
   rating           Float?
   ratingCount      Int              @default(0)
-  tags             Tags?             @relation(fields: [tagId], references: [id])
-  tagId            String?           @db.ObjectId
+  tags             Tags?            @relation(fields: [tagId], references: [id])
+  tagId            String?          @db.ObjectId
   ProductType      productTypes     @relation(fields: [productTypeId], references: [id])
   productTypeId    String           @db.ObjectId
   isActive         Boolean          @default(true)
@@ -260,4 +260,14 @@ model Order {
   paymentStatus     paymentStatusType @default(Pending)
   paymentType       paymentMethod
   orderAmount       Int
+}
+
+model supplierProductInventory {
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String @unique
+  productCode           String @unique
+  totalStock            Int
+  unit                  Unit
+  availableStock        Int
+  minimumAvailableStock Int    @default(10)
 }
