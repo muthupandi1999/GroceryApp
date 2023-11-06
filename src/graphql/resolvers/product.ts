@@ -114,13 +114,15 @@ export default {
           tags: input.tagId ? { connect: { id: input.tagId } } : undefined,
           ProductType: { connect: { id: productTypeId } },
           ProductAssetsId: imageAssests.id,
-          branch: { connect: { id: input.branchId } },
+          productCode:input.productCode
+          // branchId: branchId ? { connect: { id: input.branchId } } : undefined,
         },
+        
         include: {
           ProductType: true,
           variant: true,
           image: true,
-          tags:true
+          tags: true
         },
       });
     },
@@ -252,7 +254,7 @@ export default {
 
         return await prisma.products.update({
           where: { id },
-          data: { tags: input.tagId ? { connect: { id: input.tagId } } : undefined,...restInput },
+          data: { tags: input.tagId ? { connect: { id: input.tagId } } : undefined, ...restInput },
           include: {
             ProductType: true,
             variant: true,

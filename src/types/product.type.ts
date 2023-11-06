@@ -54,7 +54,8 @@ export type CreateProductInput = {
   tagId?:string
   description: [productDetailsInput];
   variant: [variantsInput];
-  branchId:string
+  branchId:string;
+  productCode:string
 };
 
 
