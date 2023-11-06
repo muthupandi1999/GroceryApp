@@ -1,16 +1,16 @@
 export type notificationInput = {
-    title: string;
-    body: string;
+  title: string;
+  body: string;
 };
 
 export type sendPushNotificationToOne = {
-    token: string;
-    notification: notificationInput;
-    data: any;
+  token: string;
+  notification: notificationInput;
+  data: any;
 };
 
 export type sendPushNotificationToMulti = {
-    tokens: string[];
-    notification: notificationInput;
-    data: any;
+  tokens: [string];
+  notification: notificationInput;
+  data: any;
 };

@@ -10,10 +10,11 @@ export default `
     data:JsonObject
   }
   input sendPushNotificationToMulti {
-    token: [String]
+    token: [String]!
     notification: notificationInput
     data:JsonObject
   }
+  
   type Mutation {
     sendPushNotificationToOne(input:sendPushNotificationToOne):String
     sendPushNotificationToMulti(input:sendPushNotificationToMulti):String
