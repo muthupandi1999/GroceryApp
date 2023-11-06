@@ -126,23 +126,23 @@ model ProductAssets {
 }
 
 model Products {
-  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  productCode      String
   name             String
   shortDescription String
   description      productDetails[]
   image            ProductAssets?
-  ProductAssetsId  String           @unique @db.ObjectId
+  ProductAssetsId  String             @unique @db.ObjectId
   rating           Float?
-  ratingCount      Int              @default(0)
-  tags             Tags?            @relation(fields: [tagId], references: [id])
-  tagId            String?          @db.ObjectId
-  ProductType      productTypes     @relation(fields: [productTypeId], references: [id])
-  productTypeId    String           @db.ObjectId
-  isActive         Boolean          @default(true)
+  ratingCount      Int                @default(0)
+  tags             Tags?              @relation(fields: [tagId], references: [id])
+  tagId            String?            @db.ObjectId
+  ProductType      productTypes       @relation(fields: [productTypeId], references: [id])
+  productTypeId    String             @db.ObjectId
+  isActive         Boolean            @default(true)
   AddToCart        AddToCart[]
   variant          Variants[]
-  branch           Branch           @relation(fields: [branchId], references: [id])
-  branchId         String           @db.ObjectId
+  ProductInventory ProductInventory[]
 }
 
 model Tags {
@@ -162,15 +162,27 @@ enum Unit {
 }
 
 model Variants {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
-  unit       Unit
-  size       String?
-  price      Float
-  values     String
-  stock      Int
-  product    Products?  @relation(fields: [productsId], references: [id])
-  productsId String?    @db.ObjectId
-  AddToCart  AddToCart?
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  unit             Unit
+  size             String?
+  price            Float
+  values           String
+  stock            Int
+  branch           Branch?           @relation(fields: [branchId], references: [id])
+  branchId         String?           @db.ObjectId
+  product          Products?         @relation(fields: [productsId], references: [id])
+  productsId       String?           @db.ObjectId
+  AddToCart        AddToCart?
+  ProductInventory ProductInventory?
+}
+
+model ProductInventory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  product    Products @relation(fields: [productsId], references: [id])
+  productId  String   @db.ObjectId
+  variant    Variants @relation(fields: [variantId], references: [id])
+  variantId  String   @unique @db.ObjectId
+  productsId String   @db.ObjectId
 }
 
 model AddToCart {
@@ -220,12 +232,13 @@ model Admin {
 }
 
 model Branch {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   phoneNo   String
   latitude  String
   longitude String
-  products  Products[]
+
+  Variants Variants[]
 }
 
 enum OrderType {
