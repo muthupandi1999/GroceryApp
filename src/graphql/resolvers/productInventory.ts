@@ -17,6 +17,8 @@ export default {
             { input }: { input: productInventory },
         ) => {
             const { productId, branchId, variantId, stock, minimumAvailableStock } = input
+            let productInfo = await prisma.products.findUnique({where:{id:productId},select:{productCode:true}})
+            let variantInfo = await prisma.variants.findUnique({where:{id:variantId}})
             let createProductInventory = await prisma.productInventory.create({
                 data: {
                     stock:stock,
@@ -33,7 +35,28 @@ export default {
                 }
             })
 
-            if (createProductInventory) {
+            if (createProductInventory && productInfo) {
+                let unitChanges = variantInfo?.unit;
+                let unitValue = variantInfo?.values
+                let minusStock:any;
+               
+                if(unitChanges === "gm"){
+                    minusStock = (stock / 2)
+                }else{
+                    minusStock = stock
+                }
+
+                let supplierProductInventory = await prisma.supplierProductInventory.findFirst({
+                    where:{
+                        productCode:productInfo.productCode
+                    }
+                })
+                await prisma.supplierProductInventory.update({
+                    where:{productCode:productInfo.productCode},
+                    data:{
+                        availableStock: supplierProductInventory!.availableStock - minusStock
+                    }
+                })
                 return {
                     status: true,
                     message: 'product inventory successfully added'
