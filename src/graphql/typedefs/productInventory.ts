@@ -1,9 +1,10 @@
 export default `
-  type addProductInventoryInput{
+  input addProductInventoryInput{
     productId:String!
     branchId:String!
     variantId:String!
-    count:Int!
+    stock:Int!
+    minimumAvailableStock:Int
   }
 
   type addProductInventoryResponse{

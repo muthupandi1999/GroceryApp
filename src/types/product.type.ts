@@ -16,7 +16,6 @@ export type variantsInput = {
   size?:string;
   values:string;
   price: number;
-  stock:number
 };
 
 
@@ -26,7 +25,6 @@ export type units = {
   id: string;
   unit: string;
   price: number;
-  stock:number
 };
 
 export type Products = {
@@ -83,5 +81,3 @@ export type ImageData = {
 export type ProductImageAssets = {
   id: string;
 } & ImageData;
-
-

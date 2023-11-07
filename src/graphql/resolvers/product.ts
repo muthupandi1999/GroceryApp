@@ -80,7 +80,6 @@ export default {
           data: {
             unit: e.unit,
             price: e.price,
-            stock: e.stock,
             values: e.values,
             size: e.size || undefined,
           },
@@ -233,7 +232,6 @@ export default {
                   unit: e.unit,
                   price: e.price,
                   productsId: id,
-                  stock: e.stock,
                   values: e.values,
                 },
               });

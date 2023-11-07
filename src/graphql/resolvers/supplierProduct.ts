@@ -4,7 +4,12 @@ import { createSupplierProduct } from "../../types/supplierProducts.type";
 import { verifyToken_api } from "../../validation/token.validation";
 
 export default {
-  Query: {},
+  Query: {
+    getAllSupplierProducs:async() => {
+      let allSupplierProducts = await prisma.supplierProductInventory.findMany();
+      return allSupplierProducts;
+    }
+  },
   Mutation: {
     createSupplierProduct: async (
       _: any,

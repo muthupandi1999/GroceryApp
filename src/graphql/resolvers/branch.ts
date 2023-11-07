@@ -8,10 +8,7 @@ export default {
     getBranch: async (_: any, { branchId }: { branchId: string }) => {
       let branch = await prisma.branch.findUnique({
         where: { id: branchId },
-        include:{
-          products:{include:{variant:true, image:true, ProductType:{include:{productCategory:true}}}},
-          
-        }
+       
       });
       if (branch) {
         return branch;

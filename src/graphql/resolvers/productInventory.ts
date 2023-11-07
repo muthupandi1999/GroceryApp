@@ -5,7 +5,8 @@ interface productInventory {
     productId: string,
     branchId: string,
     variantId: string,
-    count: number
+    stock: number
+    minimumAvailableStock:number
 }
 
 export default {
@@ -15,13 +16,20 @@ export default {
             _: any,
             { input }: { input: productInventory },
         ) => {
-            const { productId, branchId, variantId, count } = input
+            const { productId, branchId, variantId, stock, minimumAvailableStock } = input
             let createProductInventory = await prisma.productInventory.create({
                 data: {
-                    count:count,
+                    stock:stock,
+                    availableStock:stock,
+                    minimumAvailableStock:minimumAvailableStock,
                     product: { connect: { id: productId } } ,
                     branch: { connect: { id: branchId } } ,
                     variant: { connect: { id: variantId } } ,
+                },
+                include:{
+                    product:true,
+                    variant:true,
+                    branch:true
                 }
             })
 

@@ -2,23 +2,24 @@ export default `
 
     type SupplierProduct {
         id:ID!
+        name:String!
         productCode:String!
         totalStock:Int
         availableStock:Int
-        mimimumAvailableStock:Int
+        minimumAvailableStock:Int
     }
 
     input supplierProductInput {
         name:String!
         totalStock:Int!
-        mimimumAvailableStock:Int
+        minimumAvailableStock:Int
         unit:Unit
     }
 
     input updateSupplierProductInput {
         name:String!
         totalStock:Int
-        mimimumAvailableStock:Int
+        minimumAvailableStock:Int
     }
 
     type Query {

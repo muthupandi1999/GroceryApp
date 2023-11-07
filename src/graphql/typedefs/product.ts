@@ -51,7 +51,6 @@ export default `
     size:String
     values: String
     price: Float
-    stock: Int
   }
 
   input variantUpdateInput {
@@ -60,12 +59,12 @@ export default `
     size:String
     values: String
     price: Float
-    stock: Int
   }
 
   type Products {
     id: ID!
     name: String!
+    productCode:String!
     shortDescription: String
     description: [productDetails]
     variant : [variants]
@@ -76,18 +75,16 @@ export default `
     isActive: Boolean
     ProductType:ProductType           
     productTypeId: String
-    branch:Branch
-    branchId:String
   }
 
   input CreateProductInput {
     name: String!
+    productCode:String!
     image: productImageAssetsInput
     shortDescription: String
     description: [productDetailsInput!]
     tag:String
     variant: [variantInput!]
-    branchId:String!
   }
 
   type productStatus {
@@ -96,6 +93,7 @@ export default `
   }
   input UpdateProductInput {
     name: String
+    productCode:String
     image: productImageAssetsInput
     variant: [variantUpdateInput]
     shortDescription: String
