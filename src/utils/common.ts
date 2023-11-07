@@ -31,6 +31,7 @@ export const updateAddToCart = async (addToCart: any) => {
         },
     });
 }
+
 export const updateProductInventory = async (addToCart: any) => {
     let products = await prisma.addToCart.findMany({
         where: {
