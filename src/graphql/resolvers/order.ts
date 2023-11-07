@@ -4,6 +4,7 @@ import {
   createAddress,
   generateOrderId,
   updateAddToCart,
+  updateProductInventory,
 } from "../../utils/common";
 import { Address } from "../../types/address.type";
 
@@ -31,8 +32,8 @@ export default {
           orderType: orderType,
           address: address
             ? {
-                connect: { id: address.id },
-              }
+              connect: { id: address.id },
+            }
             : undefined,
           addToCart: {
             connect: addToCartId.map((id: string) => ({ id })),
@@ -52,6 +53,7 @@ export default {
 
       if (placeOrder) {
         updateAddToCart(addToCartId);
+        updateProductInventory(addToCartId);
         return { message: "Order Successfully" };
       }
       //   if (paymentType === "card") {
@@ -72,7 +74,7 @@ export default {
             },
             data: {
               totalPrice: e.quantity * variantFind?.price,
-              quantity:e.quantity
+              quantity: e.quantity
             },
           });
         }

@@ -31,5 +31,52 @@ export const updateAddToCart = async (addToCart: any) => {
         },
     });
 }
+export const updateProductInventory = async (addToCart: any) => {
+    let products = await prisma.addToCart.findMany({
+        where: {
+            id: { in: addToCart },
+        },
+        include: {
+            product: true,
+            user: true,
+            selectedVariant: true
+        },
+    });
+    products.map(async (item) => {
+        let variantInfo = item?.selectedVariant;
+        let productInfo = item?.product;
+        let minusStock: number = minusStockFromInventory(variantInfo, item.quantity);
+        console.log("🚀 ~ file: productInventory.ts:53 ~ minusStock:", minusStock)
 
+        let productInventory = await prisma.productInventory.findFirst({
+            where: {
+                productId: productInfo?.id,
+                variantId: variantInfo?.id
+            }
+        })
 
+        await prisma.productInventory.update({
+            where: { id: productInventory?.id },
+            data: {
+                availableStock: productInventory!.availableStock - minusStock
+            }
+        })
+    })
+}
+
+export const minusStockFromInventory = (variantInfo: any, stock: number) => {
+    let unit = variantInfo.unit;
+    let minusStock = 0;
+    switch (unit) {
+        case 'gm':
+            minusStock = stock / 1000 * Number(variantInfo.values);
+            break;
+        case 'ml':
+            minusStock = stock / 1000 * Number(variantInfo.values);
+            break;
+        default:
+            minusStock = stock;
+            break
+    }
+    return minusStock;
+}

@@ -45,7 +45,6 @@ input deliveryAddress {
 }
 
 input placeOrderInput {
-    orderId: String
     orderType: OrderType
     address: deliveryAddress
     addToCartId: [String]

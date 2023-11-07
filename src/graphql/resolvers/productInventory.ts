@@ -1,7 +1,7 @@
 import { prisma } from "../../config/prisma.config";
 import createGraphQLError from "../../errors/graphql.error";
 import { productInventory } from '../../types/productInventory.type';
-
+import { minusStockFromInventory } from '../../utils/common';
 
 export default {
     Query: {},
@@ -56,7 +56,7 @@ export default {
                             productCode: productInfo.productCode
                         }
                     })
-                    
+
                     await prisma.supplierProductInventory.update({
                         where: { productCode: productInfo.productCode },
                         data: {
@@ -78,19 +78,3 @@ export default {
     },
 };
 
-const minusStockFromInventory = (variantInfo: any, stock: number) => {
-    let unit = variantInfo.unit;
-    let minusStock = 0;
-    switch (unit) {
-        case 'gm':
-            minusStock = stock / 1000 * Number(variantInfo.values);
-            break;
-        case 'ml':
-            minusStock = stock / 1000 * Number(variantInfo.values);
-            break;
-        default:
-            minusStock = stock;
-            break
-    }
-    return minusStock;
-}
