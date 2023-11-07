@@ -183,9 +183,9 @@ model ProductInventory {
   variantId  String   @unique @db.ObjectId
   branch     Branch?  @relation(fields: [branchId], references: [id])
   branchId   String?  @db.ObjectId
-  stock      Int
-  availableStock Int
-  minimumAvailableStock Int
+  stock      Float
+  availableStock Float
+  minimumAvailableStock Float
 }
 
 model AddToCart {
@@ -283,8 +283,8 @@ model supplierProductInventory {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
   name                  String @unique
   productCode           String @unique
-  totalStock            Int
+  totalStock            Float
   unit                  Unit
-  availableStock        Int
-  minimumAvailableStock Int    @default(10)
+  availableStock        Float
+  minimumAvailableStock Float    @default(10.0)
 }
