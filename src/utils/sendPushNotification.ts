@@ -1,7 +1,6 @@
 import { getMessaging } from "firebase-admin/messaging";
 import createGraphQLError from '../errors/graphql.error'; // Replace with your actual error handling logic
-import '../../config/firebase.config';
-async function sendPushNotificationToOne(data, token, notification) {
+async function sendPushNotificationToOne(data:any, token:string, notification:any) {
   try {
     const message = {
       data: { ...data },
@@ -22,7 +21,7 @@ async function sendPushNotificationToOne(data, token, notification) {
   }
 }
 
-async function sendPushNotificationToMulti(data, tokens, notification) {
+async function sendPushNotificationToMulti(data:any, tokens:string[], notification:any) {
   try {
     const message = {
       tokens,
