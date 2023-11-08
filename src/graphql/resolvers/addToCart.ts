@@ -6,7 +6,6 @@ import user from "./user";
 export default {
   Query: {
     getAddToCartsByUserId: async (_: any, __: any, context: any) => {
-      console.log("Hiiiiiiiiiiiii");
       
       let carts = await prisma.addToCart.findMany({
         include: {
