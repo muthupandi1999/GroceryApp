@@ -44,6 +44,7 @@ export default {
         }
 
         //If not exists create produc inventory
+        
         let createProductInventory = await prisma.productInventory.create({
           data: {
             stock: stock,

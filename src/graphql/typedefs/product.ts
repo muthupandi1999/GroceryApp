@@ -71,6 +71,8 @@ export default `
     tag:String
     image : productImageAssets
     rating:Float
+    dicountType:DiscountType
+    dicountPercentage: Float
     ratingCount :Int            
     isActive: Boolean
     ProductType:ProductType           
