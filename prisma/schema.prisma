@@ -140,25 +140,27 @@ model ProductAssets {
 }
 
 model Products {
-  id               String             @id @default(auto()) @map("_id") @db.ObjectId
-  productCode      String
-  name             String
-  shortDescription String
-  description      productDetails[]
-  image            ProductAssets?
-  ProductAssetsId  String             @unique @db.ObjectId
-  rating           Float?
-  ratingCount      Int                @default(0)
-  tags             Tags?              @relation(fields: [tagId], references: [id])
-  tagId            String?            @db.ObjectId
-  ProductType      productTypes       @relation(fields: [productTypeId], references: [id])
-  productTypeId    String             @db.ObjectId
-  isActive         Boolean            @default(true)
-  AddToCart        AddToCart[]
-  variant          Variants[]
-  ProductInventory ProductInventory[]
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id                String             @id @default(auto()) @map("_id") @db.ObjectId
+  productCode       String
+  name              String
+  shortDescription  String
+  description       productDetails[]
+  image             ProductAssets?
+  ProductAssetsId   String             @unique @db.ObjectId
+  rating            Float?
+  ratingCount       Int                @default(0)
+  tags              Tags?              @relation(fields: [tagId], references: [id])
+  tagId             String?            @db.ObjectId
+  ProductType       productTypes       @relation(fields: [productTypeId], references: [id])
+  productTypeId     String             @db.ObjectId
+  isActive          Boolean            @default(true)
+  dicountPercentage Float?
+  dicountType       DiscountType?
+  AddToCart         AddToCart[]
+  variant           Variants[]
+  ProductInventory  ProductInventory[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 }
 
 model Tags {
@@ -312,13 +314,13 @@ model Order {
 }
 
 model supplierProductInventory {
-  id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  name                  String @unique
-  productCode           String @unique
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String   @unique
+  productCode           String   @unique
   totalStock            Float
   unit                  Unit
   availableStock        Float
-  minimumAvailableStock Float  @default(10.0)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  minimumAvailableStock Float    @default(10.0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }
