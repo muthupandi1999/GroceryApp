@@ -46,6 +46,7 @@ export const updateProductInventory = async (addToCart: any) => {
       selectedVariant: true,
     },
   });
+
   products.forEach(async (item: any) => {
     let variantInfo = item?.selectedVariant;
     let productInfo = item?.product;
@@ -62,7 +63,7 @@ export const updateProductInventory = async (addToCart: any) => {
       },
     });
 
-    await prisma.productInventory.update({
+    let updatedProductInventory = await prisma.productInventory.update({
       where: { id: productInventory?.id },
       data: {
         availableStock: productInventory!.availableStock - minusStock,
@@ -70,29 +71,7 @@ export const updateProductInventory = async (addToCart: any) => {
     });
 
     //push notification for reach the minimum available stock
-
-    if (
-      productInventory &&
-      productInventory?.availableStock <=
-        productInventory?.minimumAvailableStock
-    ) {
-      const notificationData = {
-        data: {
-          // Specify your data fields here
-        },
-        token: "your_device_token", // Replace with the actual device token
-        notification: {
-          title: "Reminder for minimum available stock",
-          body: "Please reach out the  supplier to fill the stocks",
-        },
-      };
-
-      await sendPushNotificationToOne(
-        notificationData.data,
-        notificationData.token,
-        notificationData.notification
-      );
-    }
+    pushNotificationMessage(updatedProductInventory);
   });
 };
 
@@ -111,4 +90,30 @@ export const minusStockFromInventory = (variantInfo: any, stock: number) => {
       break;
   }
   return minusStock;
+};
+
+const pushNotificationMessage = async (productInventory: any) => {
+  if (
+    productInventory &&
+    productInventory?.availableStock <= productInventory?.minimumAvailableStock
+  ) {
+    console.log("vanakam da mapla push notification la erunthu");
+    const notificationData = {
+      data: {
+        // Specify your data fields here
+      },
+      token:
+        "cCJ0r_DDVPwygBCjPW1x-G:APA91bF4dQfBqmV6IN06O25-tO9qGCVTC1vfmAS10K_6RTxoS1kdAzBH8zSDYWTXAZw38AgywL1nky7tTTEGYE8S8tVBsLPXz8rcUzIwNBCCQyEhRhzy0FdMLTXfc6yGebX7sxH5Zl0X", // Replace with the actual device token
+      notification: {
+        title: "Reminder for minimum available stock",
+        body: "Please reach out the  supplier to fill the stocks",
+      },
+    };
+
+    await sendPushNotificationToOne(
+      notificationData.data,
+      notificationData.token,
+      notificationData.notification
+    );
+  }
 };
