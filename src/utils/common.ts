@@ -1,10 +1,12 @@
 import { prisma } from "../config/prisma.config";
+const stripe = require('stripe')('sk_test_51NjzQvSAjtfPsOjiGDrQ1QUxVwPTB8Tvc12f2l8Df0TKcc2e5j6wOcTxnMRl8x9bhIB5CFK8GrM5e4PdMhTijoxI00cORNXoOC')
 import { Address, Label } from "../types/address.type";
 import { v4 as uuidv4 } from "uuid";
 import {
   sendPushNotificationToOne,
   sendPushNotificationToMulti,
 } from "./sendPushNotification";
+
 export const createAddress = async (input: Address) => {
   const { address, apartment, label, pincode } = input;
   let createAddress = await prisma.address.create({
@@ -117,3 +119,11 @@ const pushNotificationMessage = async (productInventory: any) => {
     );
   }
 };
+
+export const createStripeCustomer = async (name: string, email: string) => {
+  let customer = await stripe.customers.create({
+    name: name,
+    email: email,
+  })
+  return customer.id
+}
