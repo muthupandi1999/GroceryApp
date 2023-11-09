@@ -22,6 +22,25 @@ export default {
           data: { ...data },
           token,
           notification: { ...notification },
+          // apns: {
+          //   payload: {
+          //     aps: {
+          //       'mutable-content': 1
+          //     }
+          //   },
+          //   fcm_options: {
+          //     image: 'https://foo.bar.pizza-monster.png'
+          //   }
+          // },
+          // webpush: {
+          //   headers: {
+          //     image: 'https://foo.bar.pizza-monster.png'
+          //   }
+          // },
+
+
+
+          
         };
         console.log("🚀 ~ file: firebase.ts:26 ~ message:", message)
 
