@@ -206,12 +206,6 @@ export default {
       _: any,
       { campaignId, productId }: { campaignId: string; productId: string }
     ) => {
-      const result = await prisma.user.aggregateRaw({
-        pipeline: [
-          { $match: { status: "registered" } },
-          { $group: { _id: "$country", total: { $sum: 1 } } },
-        ],
-      });
       let deleteProductCampaign = await prisma.products.update({
         where: { id: productId },
         data: {
