@@ -155,7 +155,7 @@ model Products {
   productTypeId     String             @db.ObjectId
   isActive          Boolean            @default(true)
   dicountPercentage Float?
-  discountType       DiscountType?
+  discountType      DiscountType?
   AddToCart         AddToCart[]
   variant           Variants[]
   ProductInventory  ProductInventory[]
@@ -292,8 +292,8 @@ model Branch {
 }
 
 enum OrderType {
-  Placed
-  Delivered
+  Takeaway
+  Delivery
 }
 
 enum paymentMethod {
@@ -308,11 +308,22 @@ enum paymentStatusType {
   Pending
 }
 
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  OUTFORDELIVERY
+  DELIVERED
+  CANCELLED
+  RETURNED
+  REJECTED
+}
+
 model Order {
   id                String            @id @default(auto()) @map("_id") @db.ObjectId
   orderId           String
   orderTime         DateTime
-  orderType         OrderType         @default(Placed)
+  orderType         OrderType
+  orderStatus       OrderStatus       @default(PENDING)
   address           Address?          @relation(fields: [deliveryAddressId], references: [id])
   deliveryAddressId String?           @db.ObjectId
   addToCart         AddToCart[]

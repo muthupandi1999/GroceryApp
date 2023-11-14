@@ -1,8 +1,8 @@
 export default `
 
 enum OrderType {
-    Placed
-    Delivered
+    Takeaway
+    Delivery
 }
 
 enum paymentMethod {
@@ -45,17 +45,18 @@ input deliveryAddress {
 }
 
 input placeOrderInput {
-    orderType: OrderType
-    address: deliveryAddress
-    addToCartId: [String]
-    userId: String
+    orderType: OrderType!
+    address: deliveryAddress!
+    addToCartId: [String]!
+    userId: String!
     couponId: String
-    paymentStatus: paymentStatusType
-    paymentType: paymentMethod
-    orderAmount: Float
+    paymentType: paymentMethod!
+    orderAmount: Float!
 }
 
 type placeOrderResponse {
+    status :Boolean
+    paymentType:String
     message:String
 }
  
@@ -66,9 +67,24 @@ input productInfo {
     quantity:Int
 }
 
+input cardPaymentInput {
+    name:String
+    email:String
+    userId: String!
+    orderId:String
+    amount:Float
+    stripeToken:String
+}
+
+type cardPaymentResponse {
+    status :Boolean
+    message:String
+    url:String
+}
 
 type Mutation {
     placeOrder(input: placeOrderInput!):placeOrderResponse
     updateCarts(input:[productInfo]):placeOrderResponse
+    cardPayment(input:cardPaymentInput):cardPaymentResponse
 }
 `;
