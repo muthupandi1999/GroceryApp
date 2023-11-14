@@ -15,8 +15,14 @@ export const verifyToken_api = (
     if (!accessToken) {
       throw createGraphQLError("Auth token is not supplied", 401);
     } else {
-      const token = accessToken.slice(6, accessToken.length).trim();
-
+      let token: string;
+      const authenticationScheme = 'Bearer ';
+      if (accessToken.startsWith(authenticationScheme)) {
+        token = accessToken.slice(authenticationScheme.length, accessToken.length);
+      } else {
+        token = accessToken;
+      }
+      // const token = accessToken.slice(6, accessToken.length).trim();
       verify(token, "secret", (err: Error | null, res: any) => {
         if (err) {
           reject(err);
