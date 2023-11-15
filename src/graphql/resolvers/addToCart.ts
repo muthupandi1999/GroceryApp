@@ -5,16 +5,19 @@ import user from "./user";
 
 export default {
   Query: {
-    getAddToCartsByUserId: async (_: any, __: any, context: any) => {
-      
+    getAddToCartsByUserId: async (_: any, { userId }: any, context: any) => {
+
       let carts = await prisma.addToCart.findMany({
+        where: {
+          userId
+        },
         include: {
-          product: true ,
+          product: true,
           user: true,
-          selectedVariant:true
+          selectedVariant: true
         },
       });
-      
+
       let totalPrice = carts.reduce((acc: number, cartItem: any) => {
         return acc + cartItem.totalPrice;
       }, 0);
@@ -47,7 +50,7 @@ export default {
               existAddToCart.totalPrice! +
               existAddToCart.selectedVariant!.price * quantity,
           },
-          include:{
+          include: {
             product: { include: { ProductType: true } },
             selectedVariant: true,
             user: true,

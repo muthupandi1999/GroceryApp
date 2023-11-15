@@ -26,7 +26,7 @@ export default `
     unit: Unit!
     values: String
     price: Float!
-    stock: Int!
+    stock: Int
   }
 
   type productImageAssets {
