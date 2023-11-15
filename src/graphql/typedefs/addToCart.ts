@@ -39,10 +39,17 @@ export default `
     getAddToCartsByUserId(userId: ID!): userAddToCarts
     
   }
+ 
+  input productInfo {
+    id:ID!
+    productId:String
+    selectedVariantId: String
+    quantity:Int
+}
 
   type Mutation {
     addToCartProduct(input: addToCartInput!): AddToCart
     deleteCart(cartId:ID!):addToCartStatus
-   
+    updateCarts(input:[productInfo]):placeOrderResponse
   }
 `;

@@ -60,13 +60,6 @@ type placeOrderResponse {
     message:String
 }
  
-input productInfo {
-    id:ID!
-    productId:String
-    selectedVariantId: String
-    quantity:Int
-}
-
 input cardPaymentInput {
     name:String
     email:String
@@ -84,7 +77,6 @@ type cardPaymentResponse {
 
 type Mutation {
     placeOrder(input: placeOrderInput!):placeOrderResponse
-    updateCarts(input:[productInfo]):placeOrderResponse
     cardPayment(input:cardPaymentInput):cardPaymentResponse
 }
 `;

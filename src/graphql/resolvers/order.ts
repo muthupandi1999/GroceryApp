@@ -65,34 +65,6 @@ export default {
         };
       }
     },
-    updateCarts: async (_: any, { input }: { input: any }) => {
-      let updateCarts = await input.map(async (e: any) => {
-        let variantFind = await prisma.variants.findUnique({
-          where: { id: e.selectedVariantId },
-        });
-        let existAddToCart = await prisma.addToCart.findUnique({
-          where: { id: e.id },
-        });
-        if (variantFind && existAddToCart) {
-          await prisma.addToCart.update({
-            where: {
-              id: e.id,
-            },
-            data: {
-              totalPrice: e.quantity * variantFind?.price,
-              quantity: e.quantity,
-            },
-          });
-        }
-      });
-
-      let changeAllData = await Promise.all(updateCarts);
-      if (changeAllData) {
-        return {
-          message: "Carts updated successfully",
-        };
-      }
-    },
     cardPayment: async (_: any, { input }: { input: any }) => {
       const { name, email, userId, orderId, amount, stripeToken } = input;
 
