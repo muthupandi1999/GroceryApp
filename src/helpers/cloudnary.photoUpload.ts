@@ -52,24 +52,28 @@ const writeFileAsync = promisify(fs.writeFile);
 //   }
 // };
 
-export const photoUpload = async (base64String: string): Promise<string> => {
+export const photoUpload = async (base64String: string): Promise<string > => {
   try {
     // Generate a unique identifier for the image
     const publicId = uuidv4();
 
     // console.log("base64String", base64String);
+    if (base64String != undefined) {
+      // Upload the image to Cloudinary
+      const uploadResult = await cloudinary.uploader.upload(base64String, {
+        folder: "Grocery",
+        public_id: publicId,
+        overwrite: true, // Set to true to overwrite if the image already exists
+      });
 
-    // Upload the image to Cloudinary
-    const uploadResult = await cloudinary.uploader.upload(base64String, {
-      folder: "Grocery",
-      public_id: publicId,
-      overwrite: true, // Set to true to overwrite if the image already exists
-    });
+      // console.log("uploadResult", uploadResult);
 
-    // console.log("uploadResult", uploadResult);
+      // Return the URL of the uploaded image
+      return uploadResult.secure_url;
 
-    // Return the URL of the uploaded image
-    return uploadResult.secure_url;
+    } else {
+      return '';
+    }
   } catch (error) {
     console.error("Error uploading image to Cloudinary:", error);
     throw new Error("Failed to upload image to Cloudinary");
