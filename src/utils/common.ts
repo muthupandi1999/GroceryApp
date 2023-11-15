@@ -36,8 +36,30 @@ export const updateAddToCart = async (addToCart: any) => {
       isOrder: true,
     },
   });
+  addSellingCount(addToCart)
 };
-
+export const addSellingCount = async (addToCart: any) => {
+  let carts = await prisma.addToCart.findMany({
+    where: {
+      id: { in: addToCart },
+    },
+    select: {
+      productId: true,
+      quantity: true,
+    },
+  });
+  console.log("🚀 ~ file: common.ts:53 ~ addSellingCount ~ carts:", carts)
+  carts.forEach(async (item: any) => {
+    await prisma.products.update({
+      where: { id: item.productId },
+      data: {
+        sellingCount: {
+          increment: item.quantity,
+        },
+      },
+    });
+  })
+}
 export const updateProductInventory = async (addToCart: any) => {
   let products = await prisma.addToCart.findMany({
     where: {

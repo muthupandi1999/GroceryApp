@@ -163,6 +163,7 @@ model Products {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   campaignId        String?            @db.ObjectId
+  sellingCount      Int                @default(0)
 }
 
 model Tags {
