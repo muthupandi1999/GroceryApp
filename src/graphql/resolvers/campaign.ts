@@ -118,8 +118,8 @@ export default {
         const Campaign = await prisma.campaign.create({
           data: {
             name: restInput.name,
-            startDate: restInput.startDate,
-            endDate: restInput.endDate,
+            startDate: new Date(restInput.startDate),
+            endDate: new Date(restInput.endDate),
             image: restInput.image,
             createdAt: new Date(),
             products: {
