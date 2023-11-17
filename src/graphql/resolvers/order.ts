@@ -29,41 +29,55 @@ export default {
         address.id = await createAddress(address);
       }
       let orderId = await generateOrderId();
-      let placeOrder = await prisma.order.create({
-        data: {
-          orderId: orderId,
-          orderTime: new Date(),
-          orderType: orderType,
-          address: address
-            ? {
-              connect: { id: address.id },
-            }
-            : undefined,
-          addToCart: {
-            connect: addToCartId.map((id: string) => ({ id })),
+      let pendingOrder = await prisma.order.count({
+        where: {
+          "orderStatus": "PENDING"
+        }
+      })
+      if (pendingOrder <= 50) {
+        let placeOrder = await prisma.order.create({
+          data: {
+            orderId: orderId,
+            orderTime: new Date(),
+            orderType: orderType,
+            address: address
+              ? {
+                connect: { id: address.id },
+              }
+              : undefined,
+            addToCart: {
+              connect: addToCartId.map((id: string) => ({ id })),
+            },
+            coupon: couponId ? { connect: { id: couponId } } : undefined,
+            user: { connect: { id: userId } },
+            orderAmount: orderAmount,
+            paymentType: paymentType,
           },
-          coupon: couponId ? { connect: { id: couponId } } : undefined,
-          user: { connect: { id: userId } },
-          orderAmount: orderAmount,
-          paymentType: paymentType,
-        },
-        include: {
-          addToCart: true,
-          coupon: true,
-          user: true,
-          address: true,
-        },
-      });
+          include: {
+            addToCart: true,
+            coupon: true,
+            user: true,
+            address: true,
+          },
+        });
 
-      if (placeOrder) {
-        updateAddToCart(addToCartId);
-        updateProductInventory(addToCartId);
+        if (placeOrder) {
+          updateAddToCart(addToCartId);
+          updateProductInventory(addToCartId);
+          return {
+            status: true,
+            paymentType,
+            message: "Order Successfully",
+          };
+        }
+      } else {
         return {
-          status: true,
+          status: false,
           paymentType,
-          message: "Order Successfully",
+          message: "Please place order after some time currently so many orders are processing right now",
         };
       }
+
     },
     cardPayment: async (_: any, { input }: { input: any }) => {
       const { name, email, userId, orderId, amount, stripeToken } = input;
