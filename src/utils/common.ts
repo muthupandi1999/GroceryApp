@@ -496,7 +496,7 @@ function parseDuration(durationString: string) {
       case 'days':
         totalMinutes += value * 24 * 60; // Convert days to minutes
         break;
-      case 'minutes':
+      case 'mins':
         totalMinutes += value;
         break;
       default:
