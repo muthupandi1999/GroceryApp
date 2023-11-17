@@ -41,6 +41,7 @@
     "graphql-scalars": "^1.22.2",
     "graphql-upload": "^16.0.2",
     "graphql-upload-ts": "^2.1.0",
+    "hpsweb-google-distance": "^1.1.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.2",

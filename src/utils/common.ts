@@ -7,6 +7,7 @@ import {
   sendPushNotificationToMulti,
 } from "./sendPushNotification";
 import transporter from "../services/mail.service";
+import distance from '../config/map.config';
 
 export const createAddress = async (input: Address) => {
   const { address, apartment, label, pincode } = input;
@@ -60,6 +61,7 @@ export const addSellingCount = async (addToCart: any) => {
     });
   })
 }
+
 export const updateProductInventory = async (addToCart: any) => {
   let products = await prisma.addToCart.findMany({
     where: {
@@ -429,4 +431,79 @@ export const sendMail = async (email: string, otp: number) => {
   transporter.sendMail(mailConfigurations, (error: any, _info: any) => {
     if (error) throw Error(error);
   });
+}
+
+const getEstimateDelivery = async (branchId: string, destinationId: string) => {
+  try {
+    let branchInfo = await prisma.branch.findUnique({
+      where: { id: branchId }
+    });
+    if (branchInfo) {
+      let startPoint = `${branchInfo.latitude},${branchInfo.longitude}`;
+      let endPoint = destinationId;
+      let data = await distance.get({
+        origin: startPoint,
+        destination: endPoint,
+      })
+      return data?.duration;
+    }
+  } catch (e) {
+    console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
+  }
+}
+
+const checkEstimateDelivery = async (destinationId: string) => {
+  try {
+    let branchInfo = await prisma.branch.findMany({});
+    let result = branchInfo.map(async (item: any) => {
+      let startPoint = `${item.latitude},${item.longitude}`;
+      let endPoint = destinationId;
+      let data = await distance.get({
+        origin: startPoint,
+        destination: endPoint,
+      })
+      return {
+        branchId: item._id,
+        duration: data?.duration
+      };
+    })
+    result.sort((a: any, b: any) => {
+      const durationA = parseDuration(a.duration);
+      const durationB = parseDuration(b.duration);
+      return durationA - durationB;
+    });
+    console.log("🚀 ~ file: common.ts:480 ~ checkEstimateDelivery ~ result:", result)
+    return result[0];
+  } catch (e) {
+    console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
+  }
+}
+
+function parseDuration(durationString: string) {
+  const regex = /(\d+(\.\d+)?) (\w+)/g;
+  let match;
+  let totalMinutes = 0;
+
+  while ((match = regex.exec(durationString)) !== null) {
+    const value = parseFloat(match[1]);
+    const unit = match[3].toLowerCase();
+
+    switch (unit) {
+      case 'hours':
+        totalMinutes += value * 60;
+        break;
+      case 'day':
+      case 'days':
+        totalMinutes += value * 24 * 60; // Convert days to minutes
+        break;
+      case 'minutes':
+        totalMinutes += value;
+        break;
+      default:
+        // Handle unknown units
+        break;
+    }
+  }
+
+  return totalMinutes;
 }
