@@ -29,9 +29,34 @@ export default {
         },
       });
       console.log(allCagtegories);
-      
+
       return allCagtegories;
     },
+    getCategoryWithProductTypes: async (_: any, { id }: { id: string }, context: any) => {
+      const category = await prisma.productCategory.findUnique({
+        where: { id },
+        include: {
+          productTypes: {
+            include: {
+              products: true,
+            },
+          },
+        },
+      });
+      return category;
+    },
+    getAllCategoryWithProductTypes: async (_: any, __: any, context: any) => {
+      const category = await prisma.productCategory.findMany({
+        include: {
+          productTypes: {
+            include: {
+              products: true,
+            },
+          },
+        },
+      });
+      return category;
+    }
   },
   Mutation: {
     createCategory: async (

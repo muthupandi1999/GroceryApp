@@ -7,6 +7,24 @@ export default `
     isActive: Boolean
     productTypes:[ProductType]
   }
+  
+  type getCategoryWithProductTypesResponse{
+    id: ID!
+    name: String!
+    image: String
+    isActive: Boolean
+    productTypes:[ProductTypeWithProducts]
+  }
+
+  type ProductTypeWithProducts {
+    id: ID!
+    name: String!
+    image: String
+    isActive: Boolean
+    productCategory:Category           
+    productCategoryId: String
+    products:[Products]
+  }
 
   enum Status {
     Active
@@ -34,6 +52,8 @@ export default `
 
   type Query {
     getCategory(id: ID!): Category
+    getCategoryWithProductTypes(id: ID!): getCategoryWithProductTypesResponse
+    getAllCategoryWithProductTypes:[getCategoryWithProductTypesResponse]
     getAllCategories: [Category]
   }
 
