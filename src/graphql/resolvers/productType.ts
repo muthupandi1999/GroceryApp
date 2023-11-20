@@ -28,9 +28,6 @@ export default {
         },
       });
 
-      console.log("pto", productType!.products[0].variant);
-      
-
       return productType;
     },
     getProductTypes: async (_: any, __: any, context: any) => {

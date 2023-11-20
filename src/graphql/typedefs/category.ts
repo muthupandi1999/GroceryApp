@@ -7,7 +7,7 @@ export default `
     isActive: Boolean
     productTypes:[ProductType]
   }
-  
+
   type getCategoryWithProductTypesResponse{
     id: ID!
     name: String!
@@ -60,6 +60,6 @@ export default `
   type Mutation {
     createCategory(input: CreateCategoryInput!): Category
     updateCategory(id: ID!, input: UpdateCategoryInput!): Category
-    deleteCategory(id: ID!): categoryStatus  
+    deleteCategory(id: ID!): categoryStatus
   }
 `;
