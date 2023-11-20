@@ -38,7 +38,12 @@ export default {
         include: {
           productTypes: {
             include: {
-              products: true,
+              products: {
+                include: {
+                  image: true,
+                  variant: { include: { ProductInventory: true } },
+                },
+              },
             },
           },
         },
@@ -65,7 +70,12 @@ export default {
         include: {
           productTypes: {
             include: {
-              products: true,
+              products: {
+                include: {
+                  image: true,
+                  variant: { include: { ProductInventory: true } },
+                },
+              },
             },
           },
         },
@@ -83,7 +93,7 @@ export default {
           products
         };
       })
-
+   
       return result;
     }
   },
