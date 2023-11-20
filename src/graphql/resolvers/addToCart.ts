@@ -12,9 +12,9 @@ export default {
           userId
         },
         include: {
-          product: true,
+          product: {include:{image:true}},
           user: true,
-          selectedVariant: true
+          selectedVariant: true,
         },
       });
 
@@ -80,7 +80,7 @@ export default {
               ...(deviceToken ? { deviceToken: deviceToken } : {}),
             },
             include: {
-              product: { include: { ProductType: true } },
+              product: { include: { ProductType: true ,image:true} },
               selectedVariant: true,
               user: true,
             },
