@@ -43,7 +43,22 @@ export default {
           },
         },
       });
-      return category;
+
+      const products = category?.productTypes.flatMap((productType) =>
+        productType.products
+      );
+
+      if (!category) {
+        throw createGraphQLError("Category not found for the specified CategoryId", 500);
+      }
+
+      return {
+        id: category?.id,
+        name: category?.name,
+        image: category?.image,
+        isActive: category?.isActive,
+        products
+      };
     },
     getAllCategoryWithProductTypes: async (_: any, __: any, context: any) => {
       const category = await prisma.productCategory.findMany({
@@ -55,7 +70,21 @@ export default {
           },
         },
       });
-      return category;
+
+      let result = category.map(item => {
+        const products = item?.productTypes.flatMap((productType) =>
+          productType.products
+        );
+        return {
+          id: item?.id,
+          name: item?.name,
+          image: item?.image,
+          isActive: item?.isActive,
+          products
+        };
+      })
+
+      return result;
     }
   },
   Mutation: {
