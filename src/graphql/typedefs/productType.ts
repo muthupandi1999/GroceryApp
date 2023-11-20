@@ -7,6 +7,7 @@ export default `
     isActive: Boolean
     productCategory:Category           
     productCategoryId: String
+    products:[Products]
   }
 
   input CreateProductTypeInput {
@@ -30,8 +31,8 @@ export default `
   }
 
   type Query {
-    getProductType(id: ID!): Category
-    getProductTypes: [Category]
+    getProductType(id: ID!): ProductType
+    getProductTypes: [ProductType]
   }
 
   type Mutation {

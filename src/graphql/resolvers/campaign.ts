@@ -14,6 +14,7 @@ type discountProductCampaign = {
 };
 type CreateCampaignInput = {
   name: string;
+  description: string
   startDate: Date;
   endDate: Date;
   image: string;
@@ -22,6 +23,7 @@ type CreateCampaignInput = {
 
 type UpdateCampaignInput = {
   name?: string;
+  description?: string
   startDate?: Date;
   endDate?: Date;
   image?: string;
@@ -118,6 +120,7 @@ export default {
         const Campaign = await prisma.campaign.create({
           data: {
             name: restInput.name,
+            description:restInput.description,
             startDate: new Date(restInput.startDate),
             endDate: new Date(restInput.endDate),
             image: restInput.image,

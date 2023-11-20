@@ -12,40 +12,53 @@ import {
 export default {
   Query: {
     getProductType: async (_: any, { id }: { id: string }, context: any) => {
-      const category = await prisma.productTypes.findUnique({
+      const productType = await prisma.productTypes.findUnique({
         where: { id },
+        include: {
+          products: {
+            include: {
+              image: true,
+              variant: {
+                include: {
+                  ProductInventory: true,
+                },
+              },
+            },
+          },
+        },
       });
 
-      return category;
+      console.log("pto", productType!.products[0].variant);
+      
+
+      return productType;
     },
     getProductTypes: async (_: any, __: any, context: any) => {
       return await prisma.productTypes.findMany();
     },
-
-
   },
   Mutation: {
     createProductType: async (
       _: any,
-      {categoryId, input }: {categoryId:string, input: CreateCategoryInput },
+      { categoryId, input }: { categoryId: string; input: CreateCategoryInput },
       context: any
     ) => {
-    //   let status = await verifyToken_api(context.token);
-    //   console.log(status, "_________status");
-    //   if (status && status?.res?.role.includes("admin")) {
-        let imageUrl = await photoUpload(input.image);
-        return await prisma.productTypes.create({
-          data: {
-            name: input.name,
-            image: imageUrl,
-            productCategory:{connect:{id:categoryId}}
-          },
-          include:{
-            productCategory:true
-          }
-        });
-    //   }
-    //   throw createGraphQLError("Unauthorized", 401);
+      //   let status = await verifyToken_api(context.token);
+      //   console.log(status, "_________status");
+      //   if (status && status?.res?.role.includes("admin")) {
+      let imageUrl = await photoUpload(input.image);
+      return await prisma.productTypes.create({
+        data: {
+          name: input.name,
+          image: imageUrl,
+          productCategory: { connect: { id: categoryId } },
+        },
+        include: {
+          productCategory: true,
+        },
+      });
+      //   }
+      //   throw createGraphQLError("Unauthorized", 401);
     },
     updateProductType: async (
       _: any,
@@ -72,9 +85,9 @@ export default {
               name: input.name ?? existsData?.name,
               image: imageUrl.url ?? existsData?.image,
             },
-            include:{
-                productCategory:true
-            }
+            include: {
+              productCategory: true,
+            },
           });
         }
 

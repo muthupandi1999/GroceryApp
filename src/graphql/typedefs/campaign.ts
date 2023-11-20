@@ -3,6 +3,7 @@ export default `
   type Campaign {
     id: ID!
     name: String!
+    description: String
     startDate: DateTime!
     endDate: DateTime!
     image: String!
@@ -26,6 +27,7 @@ export default `
   
   input CreateCampaignInput {
     name: String!
+    description: String
     startDate: String!
     endDate: String!
     image: String!
@@ -34,6 +36,7 @@ export default `
   
   input UpdateCampaignInput {
     name: String
+    description: String
     startDate: String
     endDate: String
     image: String

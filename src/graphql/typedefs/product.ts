@@ -27,6 +27,7 @@ export default `
     values: String
     price: Float!
     stock: Int
+    ProductInventory:ProductInventory
   }
 
   type productImageAssets {
@@ -77,6 +78,7 @@ export default `
     isActive: Boolean
     ProductType:ProductType           
     productTypeId: String
+  
   }
 
   input CreateProductInput {

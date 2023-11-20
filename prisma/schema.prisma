@@ -211,8 +211,8 @@ model ProductInventory {
   stock                 Float
   availableStock        Float
   minimumAvailableStock Float
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime? @default(now())
+  updatedAt             DateTime? @updatedAt
 }
 
 model AddToCart {
@@ -259,6 +259,7 @@ model Coupon {
 model Campaign {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   name      String
+  description String
   image     String
   startDate DateTime
   endDate   DateTime
