@@ -185,29 +185,29 @@ enum Unit {
 }
 
 model Variants {
-  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
   unit             Unit
   size             String?
   price            Float
   values           String
-  branch           Branch?           @relation(fields: [branchId], references: [id])
-  branchId         String?           @db.ObjectId
-  product          Products?         @relation(fields: [productsId], references: [id])
-  productsId       String?           @db.ObjectId
+  branch           Branch?            @relation(fields: [branchId], references: [id])
+  branchId         String?            @db.ObjectId
+  product          Products?          @relation(fields: [productsId], references: [id])
+  productsId       String?            @db.ObjectId
   AddToCart        AddToCart?
-  ProductInventory ProductInventory?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  ProductInventory ProductInventory[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
 }
 
 model ProductInventory {
-  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
-  product               Products @relation(fields: [productId], references: [id])
-  productId             String   @db.ObjectId
-  variant               Variants @relation(fields: [variantId], references: [id])
-  variantId             String   @unique @db.ObjectId
-  branch                Branch?  @relation(fields: [branchId], references: [id])
-  branchId              String?  @db.ObjectId
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  product               Products  @relation(fields: [productId], references: [id])
+  productId             String    @db.ObjectId
+  variant               Variants  @relation(fields: [variantId], references: [id])
+  variantId             String    @db.ObjectId
+  branch                Branch?   @relation(fields: [branchId], references: [id])
+  branchId              String?   @db.ObjectId
   stock                 Float
   availableStock        Float
   minimumAvailableStock Float
@@ -257,16 +257,16 @@ model Coupon {
 }
 
 model Campaign {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
   description String
-  image     String
-  startDate DateTime
-  endDate   DateTime
-  isActive  Boolean    @default(true)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  products  Products[]
+  image       String
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  products    Products[]
 }
 
 model Admin {
