@@ -41,7 +41,7 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: { include: { ProductInventory: true } },
+                  variant: true
                 },
               },
             },
@@ -73,7 +73,7 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: { include: { ProductInventory: true } },
+                  variant: true
                 },
               },
             },
@@ -93,7 +93,7 @@ export default {
           products
         };
       })
-   
+
       return result;
     }
   },
