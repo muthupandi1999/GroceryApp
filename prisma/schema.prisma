@@ -31,8 +31,8 @@ model User {
   isActive     Boolean     @default(true)
   AddToCart    AddToCart[]
   Order        Order[]
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime?     @default(now())
+  updatedAt    DateTime?     @updatedAt
 }
 
 model OtpValidationEmail {
@@ -41,8 +41,8 @@ model OtpValidationEmail {
   secret     String
   otp        String
   countLimit Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime?  @default(now())
+  updatedAt  DateTime?  @updatedAt
 }
 
 model OtpValidationPhone {
@@ -51,8 +51,8 @@ model OtpValidationPhone {
   secret     String
   otp        String
   countLimit Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime?  @default(now())
+  updatedAt  DateTime?  @updatedAt
 }
 
 // model OtpValidation {
@@ -91,8 +91,8 @@ model Address {
   user      User?    @relation(fields: [userId], references: [id])
   userId    String?  @db.ObjectId
   Order     Order[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime?  @default(now())
+  updatedAt DateTime?  @updatedAt
 }
 
 enum isFeatured {
@@ -106,8 +106,8 @@ model ProductCategory {
   image        String
   isActive     Boolean        @default(true)
   productTypes productTypes[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  createdAt    DateTime?        @default(now())
+  updatedAt    DateTime?        @updatedAt
 }
 
 model productTypes {
@@ -118,8 +118,8 @@ model productTypes {
   productCategoryId String          @db.ObjectId
   products          Products[]
   isActive          Boolean         @default(true)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  createdAt         DateTime?         @default(now())
+  updatedAt         DateTime?         @updatedAt
 }
 
 type productDetails {
@@ -135,8 +135,8 @@ model ProductAssets {
   right     String
   product   Products? @relation(fields: [productId], references: [id]) // references `id` of `Profile`
   productId String?   @unique @db.ObjectId
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime?   @default(now())
+  updatedAt DateTime?   @updatedAt
 }
 
 model Products {
@@ -160,8 +160,8 @@ model Products {
   variant           Variants[]
   ProductInventory  ProductInventory[]
   campaign          Campaign?          @relation(fields: [campaignId], references: [id])
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  createdAt         DateTime?            @default(now())
+  updatedAt         DateTime?            @updatedAt
   campaignId        String?            @db.ObjectId
   sellingCount      Int                @default(0)
 }
@@ -170,8 +170,8 @@ model Tags {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   products  Products[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime?    @default(now())
+  updatedAt DateTime?    @updatedAt
 }
 
 enum Unit {
@@ -196,8 +196,8 @@ model Variants {
   productsId       String?            @db.ObjectId
   AddToCart        AddToCart?
   ProductInventory ProductInventory[]
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  createdAt        DateTime?            @default(now())
+  updatedAt        DateTime?            @updatedAt
 }
 
 model ProductInventory {
@@ -211,8 +211,8 @@ model ProductInventory {
   stock                 Float
   availableStock        Float
   minimumAvailableStock Float
-  createdAt             DateTime? @default(now())
-  updatedAt             DateTime? @updatedAt
+  createdAt             DateTime?  @default(now())
+  updatedAt             DateTime?  @updatedAt
 }
 
 model AddToCart {
@@ -229,8 +229,8 @@ model AddToCart {
   selectedVariantId String?   @unique @db.ObjectId
   Order             Order?    @relation(fields: [orderId], references: [id])
   orderId           String?   @db.ObjectId
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt         DateTime?   @default(now())
+  updatedAt         DateTime?   @updatedAt
 }
 
 enum DiscountType {
@@ -252,8 +252,8 @@ model Coupon {
   description        String
   isActive           Boolean      @default(true)
   Order              Order[]
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+  createdAt          DateTime?      @default(now())
+  updatedAt          DateTime?      @updatedAt
 }
 
 model Campaign {
@@ -261,11 +261,11 @@ model Campaign {
   name        String
   description String
   image       String
-  startDate   DateTime
-  endDate     DateTime
+  startDate   DateTime? 
+  endDate     DateTime? 
   isActive    Boolean    @default(true)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime?     @default(now())
+  updatedAt   DateTime?     @updatedAt
   products    Products[]
 }
 
@@ -276,8 +276,8 @@ model Admin {
   password        String
   confirmPassword String
   role            Role[]   @default([admin])
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime?    @default(now())
+  updatedAt       DateTime?   @updatedAt
 }
 
 model Branch {
@@ -289,8 +289,8 @@ model Branch {
 
   Variants         Variants[]
   ProductInventory ProductInventory[]
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  createdAt        DateTime?             @default(now())
+  updatedAt        DateTime?             @updatedAt
 }
 
 enum OrderType {
@@ -336,8 +336,8 @@ model Order {
   paymentStatus     paymentStatusType @default(Pending)
   paymentType       paymentMethod
   orderAmount       Int
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  createdAt         DateTime?          @default(now())
+  updatedAt         DateTime?           @updatedAt
 }
 
 model supplierProductInventory {
@@ -348,6 +348,6 @@ model supplierProductInventory {
   unit                  Unit
   availableStock        Float
   minimumAvailableStock Float    @default(10.0)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime?   @default(now())
+  updatedAt             DateTime?   @updatedAt
 }

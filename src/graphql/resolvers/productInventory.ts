@@ -25,7 +25,7 @@ export default {
       { input }: { input: productInventory }
     ) => {
       try {
-        const { productId, branchId, variantId, stock, minimumAvailableStock } =
+        const { productId, branchId, variantId, availableStock, minimumAvailableStock } =
           input;
 
         //Check prodcut inventory already exists or not
@@ -47,8 +47,8 @@ export default {
         
         let createProductInventory = await prisma.productInventory.create({
           data: {
-            stock: stock,
-            availableStock: stock,
+            stock: availableStock,
+            availableStock: availableStock,
             minimumAvailableStock: minimumAvailableStock,
             product: { connect: { id: productId } },
             branch: { connect: { id: branchId } },
@@ -68,7 +68,7 @@ export default {
         ) {
           let variantInfo = createProductInventory?.variant;
           let productInfo = createProductInventory?.product;
-          let minusStock: number = minusStockFromInventory(variantInfo, stock);
+          let minusStock: number = minusStockFromInventory(variantInfo, availableStock);
           console.log(
             "🚀 ~ file: productInventory.ts:53 ~ minusStock:",
             minusStock
