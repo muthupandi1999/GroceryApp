@@ -30,6 +30,8 @@ export default {
       return product;
     },
     getAllProducts: async (_: any, { filter }: { filter?: string }, context: any) => {
+      // const pageSize = 5;
+      // const pageNumber = 1;
       let allproducts = await prisma.products.findMany({
         where: {
           OR: [
@@ -52,9 +54,13 @@ export default {
           variant: true,
           image: true,
         },
+        orderBy: {
+          id: 'desc',
+        },
+        // take: pageSize,
+        // skip: (pageNumber - 1) * pageSize,
       });
       console.log(allproducts);
-
       return allproducts;
     },
   },
