@@ -2,6 +2,6 @@ export interface productInventory {
     productId: string,
     branchId: string,
     variantId: string,
-    stock: number
+    availableStock: number
     minimumAvailableStock: number
 }
