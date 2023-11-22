@@ -8,7 +8,16 @@ export default `
     role: [Role]
     profileImage: String
     isActive:Boolean
-    address:[Address]
+    Address:[userAddress]
+  }
+
+  type userAddress{
+    id: String
+    address: String
+    apartment: String
+    label: Label
+    userId: String
+    pincode:Int
   }
 
   enum Role {

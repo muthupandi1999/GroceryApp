@@ -19,7 +19,11 @@ export default {
         where: {
           id: userId,
         },
+        include: {
+          Address: true
+        }
       });
+      // console.dir(user, { depth: null })
       if (user) {
         return user;
       } else {
