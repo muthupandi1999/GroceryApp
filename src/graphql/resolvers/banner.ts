@@ -8,7 +8,8 @@ export default {
         getAllBanner: async (_: any, __: any) => {
             let banner = await prisma.banner.findMany({
                 include: {
-                    ProductType: true
+                    ProductType: {include:{productCategory:true}},
+                    
                 }
             });
             return banner;
