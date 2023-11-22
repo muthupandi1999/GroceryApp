@@ -5,8 +5,13 @@ import { verifyToken_api } from "../../validation/token.validation";
 
 export default {
   Query: {
-    getAllSupplierProducs:async() => {
-      let allSupplierProducts = await prisma.supplierProductInventory.findMany();
+    getAllSupplierProducs: async () => {
+      // const pageSize = 5;
+      // const pageNumber = 1;
+      let allSupplierProducts = await prisma.supplierProductInventory.findMany({
+        // take: pageSize,
+        // skip: (pageNumber - 1) * pageSize,
+      });
       return allSupplierProducts;
     }
   },

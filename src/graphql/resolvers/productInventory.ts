@@ -15,7 +15,21 @@ export default {
       return productInventory;
     },
     getAllProductInventory: async () => {
-      let getAllProductInventory = await prisma.productInventory.findMany();
+      // const pageSize = 5;
+      // const pageNumber = 1;
+      // const [totalCount, paginatedItems] = await prisma.$transaction([
+      //   prisma.productInventory.count({
+      //     // where: { /* your conditions here */ },
+      //   }),
+      //   prisma.productInventory.findMany({
+      //     skip: 1, // The number of items to skip (for pagination)
+      //     take: 5, // The number of items to take (page size)
+      //   }),
+      // ]);
+      let getAllProductInventory = await prisma.productInventory.findMany({
+        // take: pageSize,
+        // skip: (pageNumber - 1) * pageSize,
+      });
       return getAllProductInventory;
     },
   },
@@ -44,7 +58,7 @@ export default {
         }
 
         //If not exists create produc inventory
-        
+
         let createProductInventory = await prisma.productInventory.create({
           data: {
             stock: availableStock,

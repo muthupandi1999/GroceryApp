@@ -53,6 +53,7 @@ export default {
           ProductType: true,
           variant: true,
           image: true,
+          ProductInventory: true
         },
         orderBy: {
           id: 'desc',
@@ -60,7 +61,7 @@ export default {
         // take: pageSize,
         // skip: (pageNumber - 1) * pageSize,
       });
-      console.log(allproducts);
+      console.dir(allproducts[0], { depth: null });
       return allproducts;
     },
   },
