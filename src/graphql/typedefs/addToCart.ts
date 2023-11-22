@@ -33,7 +33,13 @@ export default `
     carts:[AddToCart]
     subTotal:Float!
   }
- 
+  
+  input updateAddToCartInput{
+    productId:String!
+    quantity: Int!
+    userId:String!
+    variantId:String!
+  }
 
   type Query {
     getAddToCartsByUserId(userId: ID!): userAddToCarts
@@ -51,5 +57,6 @@ export default `
     addToCartProduct(input: addToCartInput!): AddToCart
     deleteCart(cartId:ID!):addToCartStatus
     updateCarts(input:[productInfo]):placeOrderResponse
+    updateAddToCart(input:updateAddToCartInput):AddToCart
   }
 `;
