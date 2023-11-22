@@ -313,14 +313,12 @@ export default {
               user: { connect: { id: userId } },
             },
           });
-          console.log("🚀 ~ file: user.ts:317 ~ userProfileUpdate:", userProfileUpdate)
           userProfileUpdate = {
             ...userProfileUpdate,
             ...(addressInput
               ? { Address: { connect: { id: addressCreate.id } } }
               : {}),
           }
-          console.log("🚀 ~ file: user.ts:319 ~ userProfileUpdate:", userProfileUpdate)
         }
         let updateUser = await prisma.user.update({
           where: {

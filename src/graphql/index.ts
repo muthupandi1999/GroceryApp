@@ -20,6 +20,7 @@ const typedefsArray = loadFilesSync([
   path.join(__filename, "../typedefs/supplierProduct.ts"),
   path.join(__filename, "../typedefs/productInventory.ts"),
   path.join(__filename, "../typedefs/campaign.ts"),
+  path.join(__dirname, "./typedefs/banner.ts"),
   // path.join(__filename, "../typedefs/administrators.ts"),
 
 ]);
@@ -39,7 +40,8 @@ const resolversArray = loadFilesSync([
   path.join(__dirname, "./resolvers/supplierProduct.ts"),
   path.join(__dirname, "./resolvers/productInventory.ts"),
   path.join(__dirname, "./resolvers/campaign.ts"),
-  
+  path.join(__dirname, "./resolvers/banner.ts"),
+
   //  path.join(__dirname, "./resolvers/chartAddition.ts"),
   // path.join(__dirname, "./resolvers/administrators.ts"),
 
