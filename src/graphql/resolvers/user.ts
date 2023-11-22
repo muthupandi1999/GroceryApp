@@ -31,7 +31,11 @@ export default {
       }
     },
     getUsers: async () => {
-      let users = await prisma.user.findMany();
+      let users = await prisma.user.findMany({
+        include: {
+          Address: true
+        }
+      });
       return users;
     },
   },
