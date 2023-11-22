@@ -293,33 +293,44 @@ export default {
       });
       if (userExist) {
         let { firstName, lastName, profileImage, addressInput } = input;
-        let { apartment, address, label, pincode } = addressInput;
-        let addressCreate = await prisma.address.create({
-          data: {
-            address,
-            apartment: apartment,
-            label: label,
-            pincode: pincode,
-            user: { connect: { id: userId } },
-          },
-        });
+
         let userProfileUpdate: any = {
           ...(firstName ? { firstName: firstName } : {}),
           ...(lastName ? { lastName: lastName } : {}),
           ...(profileImage
             ? { profileImage: await photoUpload(profileImage) }
             : {}),
-          ...(addressInput
-            ? { address: { connect: { id: addressCreate.id } } }
-            : {}),
         };
+
+        if (addressInput != undefined) {
+          let { apartment, address, label, pincode } = addressInput;
+          let addressCreate = await prisma.address.create({
+            data: {
+              address,
+              apartment: apartment,
+              label: label,
+              pincode: pincode,
+              user: { connect: { id: userId } },
+            },
+          });
+          console.log("🚀 ~ file: user.ts:317 ~ userProfileUpdate:", userProfileUpdate)
+          userProfileUpdate = {
+            ...userProfileUpdate,
+            ...(addressInput
+              ? { Address: { connect: { id: addressCreate.id } } }
+              : {}),
+          }
+          console.log("🚀 ~ file: user.ts:319 ~ userProfileUpdate:", userProfileUpdate)
+        }
         let updateUser = await prisma.user.update({
           where: {
             id: userId,
           },
 
           data: userProfileUpdate,
-
+          include: {
+            Address: true
+          }
         });
         if (updateUser) {
           return {

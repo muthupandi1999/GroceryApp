@@ -56,7 +56,7 @@ export default `
     firstName: String
     lastName: String
     profileImage: String
-    address:AddressInput
+    addressInput:AddressInput
   }
 
   type Mutation {
