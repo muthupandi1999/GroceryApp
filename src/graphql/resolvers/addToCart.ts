@@ -12,7 +12,7 @@ export default {
           userId
         },
         include: {
-          product: {include:{image:true}},
+          product: { include: { image: true } },
           user: true,
           selectedVariant: true,
         },
@@ -33,6 +33,7 @@ export default {
         input;
       let existAddToCart = await prisma.addToCart.findFirst({
         where: {
+          userId: userId,
           productId: productId,
           selectedVariantId: selectedVariantId,
         },
@@ -80,7 +81,7 @@ export default {
               ...(deviceToken ? { deviceToken: deviceToken } : {}),
             },
             include: {
-              product: { include: { ProductType: true ,image:true} },
+              product: { include: { ProductType: true, image: true } },
               selectedVariant: true,
               user: true,
             },

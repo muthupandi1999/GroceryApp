@@ -15,66 +15,77 @@ import { Address } from "../../types/address.type";
 export default {
   Mutation: {
     placeOrder: async (_: any, { input }: any, context: any) => {
-      const {
-        orderType,
-        addToCartId,
-        address,
-        userId,
-        couponId,
-        paymentType,
-        orderAmount,
-      } = input;
+      try {
+        const {
+          orderType,
+          addToCartId,
+          address,
+          userId,
+          couponId,
+          paymentType,
+          orderAmount,
+          branchId
+        } = input;
 
-      if (!address?.id) {
-        address.id = await createAddress(address);
-      }
-      let orderId = await generateOrderId();
-      let pendingOrder = await prisma.order.count({
-        where: {
-          "orderStatus": "PENDING"
+        if (!address?.id) {
+          address.id = await createAddress(address, userId);
         }
-      })
-      if (pendingOrder <= 50) {
-        let placeOrder = await prisma.order.create({
-          data: {
-            orderId: orderId,
-            orderTime: new Date(),
-            orderType: orderType,
-            address: address
-              ? {
-                connect: { id: address.id },
-              }
-              : undefined,
-            addToCart: {
-              connect: addToCartId.map((id: string) => ({ id })),
+        let orderId = await generateOrderId();
+        let pendingOrder = await prisma.order.count({
+          where: {
+            "orderStatus": "PENDING"
+          }
+        })
+        if (pendingOrder <= 50) {
+          let placeOrder = await prisma.order.create({
+            data: {
+              orderId: orderId,
+              orderTime: new Date(),
+              orderType: orderType,
+              address: address
+                ? {
+                  connect: { id: address.id },
+                }
+                : undefined,
+              addToCart: {
+                connect: addToCartId.map((id: string) => ({ id })),
+              },
+              coupon: couponId ? { connect: { id: couponId } } : undefined,
+              user: { connect: { id: userId } },
+              branch: { connect: { id: branchId } },
+              orderAmount: orderAmount,
+              paymentType: paymentType,
             },
-            coupon: couponId ? { connect: { id: couponId } } : undefined,
-            user: { connect: { id: userId } },
-            orderAmount: orderAmount,
-            paymentType: paymentType,
-          },
-          include: {
-            addToCart: true,
-            coupon: true,
-            user: true,
-            address: true,
-          },
-        });
+            include: {
+              addToCart: true,
+              coupon: true,
+              user: true,
+              address: true,
+            },
+          });
 
-        if (placeOrder) {
-          updateAddToCart(addToCartId);
-          updateProductInventory(addToCartId);
+          if (placeOrder) {
+            updateAddToCart(addToCartId);
+            updateProductInventory(addToCartId, branchId);
+            return {
+              status: true,
+              paymentType,
+              message: "Order Successfully",
+            };
+          }
+        } else {
           return {
-            status: true,
+            status: false,
             paymentType,
-            message: "Order Successfully",
+            message: "Please place order after some time currently so many orders are processing right now",
           };
         }
-      } else {
+      } catch (e) {
+        console.log("🚀 ~ file: order.ts:84 ~ placeOrder: ~ e:", e)
         return {
           status: false,
-          paymentType,
-          message: "Please place order after some time currently so many orders are processing right now",
+          paymentType: 'ERROR',
+          message: "Something went wrong",
         };
       }
 

@@ -9,7 +9,7 @@ import {
 import transporter from "../services/mail.service";
 import distance from '../config/map.config';
 
-export const createAddress = async (input: Address) => {
+export const createAddress = async (input: Address, userId: string) => {
   const { address, apartment, label, pincode } = input;
   let createAddress = await prisma.address.create({
     data: {
@@ -17,6 +17,7 @@ export const createAddress = async (input: Address) => {
       apartment,
       label,
       pincode,
+      user: { connect: { id: userId } },
     },
   });
   return createAddress.id;
@@ -62,7 +63,7 @@ export const addSellingCount = async (addToCart: any) => {
   })
 }
 
-export const updateProductInventory = async (addToCart: any) => {
+export const updateProductInventory = async (addToCart: any, branchId: string) => {
   let products = await prisma.addToCart.findMany({
     where: {
       id: { in: addToCart },
@@ -87,6 +88,7 @@ export const updateProductInventory = async (addToCart: any) => {
       where: {
         productId: productInfo?.id,
         variantId: variantInfo?.id,
+        branchId:branchId
       },
     });
 

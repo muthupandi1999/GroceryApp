@@ -52,6 +52,7 @@ input placeOrderInput {
     couponId: String
     paymentType: paymentMethod!
     orderAmount: Float!
+    branchId:String!
 }
 
 type placeOrderResponse {
