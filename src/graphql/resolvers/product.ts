@@ -51,7 +51,7 @@ export default {
         },
         include: {
           ProductType: true,
-          variant: true,
+          variant: {include:{ProductInventory:true}},
           image: true,
           ProductInventory: true
         },

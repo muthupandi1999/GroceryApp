@@ -25,7 +25,8 @@ export default {
     getAllCategories: async (_: any, __: any, context: any) => {
       let allCagtegories = await prisma.productCategory.findMany({
         include: {
-          productTypes: true,
+          productTypes: {include:{products:{include:{image:true, variant:{include:{ProductInventory:true}}}}}},
+          
         },
       });
       console.log(allCagtegories);
@@ -41,11 +42,13 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: true
+                  variant: { include: { ProductInventory: true } },
+                  
                 },
               },
             },
           },
+          
         },
       });
 
@@ -76,13 +79,14 @@ export default {
                   variant: true
                 },
               },
+              
             },
           },
         },
       });
 
-      let result = category.map(item => {
-        const products = item?.productTypes.flatMap((productType) =>
+      let result = category.map((item:any) => {
+        const products = item?.productTypes.flatMap((productType:any) =>
           productType.products
         );
         return {
@@ -104,7 +108,6 @@ export default {
       context: any
     ) => {
       let status = await verifyToken_api(context.token);
-      console.log(status, "_________status");
       if (status && status?.res?.role.includes("admin")) {
         let imageUrl = await photoUpload(input.image);
         return await prisma.productCategory.create({
@@ -132,7 +135,7 @@ export default {
             : existsData.image;
           const publicId =
             RegExp(/\/v\d+\/(.*?)\./).exec(existsData.image)?.[1] || "";
-
+            
           await cloudinary.uploader.destroy(publicId);
 
           return await prisma.productCategory.update({

@@ -78,7 +78,6 @@ export default `
     isActive: Boolean
     ProductType:ProductType           
     productTypeId: String
-  
   }
 
   input CreateProductInput {
