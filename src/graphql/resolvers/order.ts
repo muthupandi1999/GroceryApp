@@ -13,6 +13,23 @@ import {
 import { Address } from "../../types/address.type";
 
 export default {
+  Query: {
+    getUserOrder: async (_: any, { userId }: any, context: any) => {
+      let userOrders = await prisma.order.findMany({
+        where: {
+          userId
+        },
+        include: {
+          addToCart: true,
+          coupon: true,
+          user: true,
+          address: true,
+          branch: true
+        },
+      })
+      return userOrders
+    }
+  },
   Mutation: {
     placeOrder: async (_: any, { input }: any, context: any) => {
       try {

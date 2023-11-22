@@ -28,6 +28,8 @@ type Order {
     cartId: String
     user: User
     userId: String
+    branch:Branch
+    branchId:String
     coupon:Coupon
     couponId: String
     paymentStatus: paymentStatusType
@@ -74,6 +76,10 @@ type cardPaymentResponse {
     status :Boolean
     message:String
     url:String
+}
+
+type Query{
+    getUserOrder(userId:String):[Order]
 }
 
 type Mutation {
