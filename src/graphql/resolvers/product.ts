@@ -22,10 +22,11 @@ export default {
         where: { id },
         include: {
           ProductType: true,
-          variant: true,
+          variant: { include: { ProductInventory: true } },
           image: true,
         },
       });
+      console.dir(product?.variant, { depth: null })
 
       return product;
     },
@@ -51,7 +52,7 @@ export default {
         },
         include: {
           ProductType: true,
-          variant: {include:{ProductInventory:true}},
+          variant: { include: { ProductInventory: true } },
           image: true,
           ProductInventory: true
         },
