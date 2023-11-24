@@ -27,7 +27,7 @@ export default `
     values: String
     price: Float!
     stock: Int
-    ProductInventory:ProductInventory
+    ProductInventory:[ProductInventory]
   }
 
   type productImageAssets {

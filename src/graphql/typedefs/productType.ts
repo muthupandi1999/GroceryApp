@@ -5,6 +5,7 @@ export default `
     name: String!
     image: String
     isActive: Boolean
+    defaultRoute:String
     productCategory:Category           
     productCategoryId: String
     products:[Products]

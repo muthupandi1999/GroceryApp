@@ -6,6 +6,7 @@ export default `
     image: String
     isActive: Boolean
     productTypes:[ProductType]
+    defaultRoute:String
   }
 
   type ProductTypeWithProducts {
