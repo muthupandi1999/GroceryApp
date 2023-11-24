@@ -104,6 +104,7 @@ model ProductCategory {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
   name         String
   image        String
+    defaultRoute String?
   isActive     Boolean        @default(true)
   productTypes productTypes[]
   createdAt    DateTime?      @default(now())
@@ -114,6 +115,7 @@ model productTypes {
   id                String          @id @default(auto()) @map("_id") @db.ObjectId
   name              String
   image             String
+  defaultRoute String?
   productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
   productCategoryId String          @db.ObjectId
   products          Products[]
