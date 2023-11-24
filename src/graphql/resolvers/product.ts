@@ -77,10 +77,14 @@ export default {
     ) => {
       let status = await verifyToken_api(context.token);
       if (status && status?.res?.role.includes("admin")) {
-        let imageFront = (await photoUpload(input.image.front)) ?? "";
-        let imageBack = (await photoUpload(input.image.back)) ?? "";
-        let imageleft = (await photoUpload(input.image.left)) ?? "";
-        let imageRight = (await photoUpload(input.image.right)) ?? "";
+        let image = (await photoUpload(input.image.image)) ?? "";
+        let imageListPromises: Promise<string>[] = input.image.imageList.map(async (item: string) => {
+          return await photoUpload(item) ?? "";
+        });
+
+        let imageList: string[] = await Promise.all(imageListPromises);
+        console.log("🚀 ~ file: product.ts:86 ~ imageList:", imageList)
+
         let units = input.variant?.map(async (e: any) => {
           let data = await prisma.variants.create({
             data: {
@@ -100,10 +104,8 @@ export default {
 
         let imageAssests = await prisma.productAssets.create({
           data: {
-            front: imageFront,
-            back: imageBack,
-            left: imageleft,
-            right: imageRight,
+            image: image,
+            imageList: imageList ?? []
           },
         });
 
@@ -194,32 +196,50 @@ export default {
             //       }
             //     }
             //   }
-            const updatedImageData: Partial<ImageData> = {};
+            // const updatedImageData: Partial<ImageData> = {};
 
             // Loop through the image fields and update if a new image is provided
-            for (const field of ["front", "back", "left", "right"] as Array<
-              keyof ImageData
-            >) {
-              if (image[field]) {
-                updatedImageData[field] = await photoUpload(image[field]);
+            // for (const field of ["front", "back", "left", "right"] as Array<
+            //   keyof ImageData
+            // >) {
+            //   if (image[field]) {
+            //     updatedImageData[field] = await photoUpload(image[field]);
 
-                // Destroy old cloudinary images
-                if (existingProduct.image && existingProduct.image[field]) {
-                  const publicId = RegExp(/\/v\d+\/(.*?)\./).exec(
-                    existingProduct.image[field]
-                  )?.[1];
-                  if (publicId) {
-                    await cloudinary.uploader.destroy(publicId);
-                  }
-                }
-              } else if (existingProduct.image) {
-                // If no new image is provided, retain the existing image
-                updatedImageData[field] = existingProduct.image[field];
-              }
-            }
-            updateAssets = await prisma.productAssets.update({
+            //     // Destroy old cloudinary images
+            //     if (existingProduct.image && existingProduct.image[field]) {
+            //       const publicId = RegExp(/\/v\d+\/(.*?)\./).exec(
+            //         existingProduct.image[field]
+            //       )?.[1];
+            //       if (publicId) {
+            //         await cloudinary.uploader.destroy(publicId);
+            //       }
+            //     }
+            //   } else if (existingProduct.image) {
+            //     // If no new image is provided, retain the existing image
+            //     updatedImageData[field] = existingProduct.image[field];
+            //   }
+            // }
+
+            // updateAssets = await prisma.productAssets.update({
+            //   where: { id: existingProduct.ProductAssetsId },
+            //   data: updatedImageData,
+            // });
+
+            //new
+            let imageUpdate = image.image
+              ? await photoUpload(image.image)
+              : existingProduct.image?.image;
+            let imageListPromises: Promise<string>[] = image.imageList.map(async (item: string) => {
+              return await photoUpload(item) ?? "";
+            });
+            let imageList: string[] = await Promise.all(imageListPromises);
+
+            let updateAssets = await prisma.productAssets.update({
               where: { id: existingProduct.ProductAssetsId },
-              data: updatedImageData,
+              data: {
+                image: imageUpdate,
+                imageList
+              },
             });
           }
 

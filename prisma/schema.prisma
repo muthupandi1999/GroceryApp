@@ -129,11 +129,9 @@ type productDetails {
 }
 
 model ProductAssets {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  front     String
-  back      String
-  left      String
-  right     String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  image     String
+  imageList String[]
   product   Products? @relation(fields: [productId], references: [id]) // references `id` of `Profile`
   productId String?   @unique @db.ObjectId
   createdAt DateTime? @default(now())

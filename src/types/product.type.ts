@@ -39,10 +39,8 @@ export type Products = {
 };
 
 export type ProductimageAssets = {
-  front: string;
-  back: string;
-  left: string;
-  right: string;
+  image: string;
+  imageList: [string];
 };
 
 export type CreateProductInput = {
@@ -72,10 +70,8 @@ export type UpdateProductInput = {
 };
 
 export type ImageData = {
-  front: string;
-  back: string;
-  left: string;
-  right: string;
+  image: string;
+  imageList: [string];
 };
 
 export type ProductImageAssets = {

@@ -32,17 +32,13 @@ export default `
 
   type productImageAssets {
     id:ID
-    front:String
-    back:String
-    left:String
-    right:String
+    image:String
+    imageList:[String]
   }
 
   input productImageAssetsInput {
-    front:String
-    back:String
-    left:String
-    right:String
+    image:String
+    imageList:[String]
   }
 
 
