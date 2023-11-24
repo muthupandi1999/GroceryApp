@@ -23,7 +23,7 @@ export default {
       return category;
     },
     getAllCategories: async (_: any, __: any, context: any) => {
-      let allCagtegories = await prisma.productCategory.findMany({
+      let allCategories = await prisma.productCategory.findMany({
         include: {
           productTypes: { include: { products: { include: { image: true, variant: { include: { ProductInventory: true } } } } } },
 
@@ -31,7 +31,20 @@ export default {
       });
       console.dir(allCagtegories[0], { depth: null });
 
-      return allCagtegories;
+      const categoriesWithDefaultRoutes = allCategories.map((category: any) => {
+        const defaultProductType = category.productTypes[0]; // Grabbing the first product type for the default route
+        return {
+          ...category,
+          defaultRoute: `/category/${category.name}/${category.id}/${defaultProductType?.id}`,
+          productTypes: category.productTypes.map((productType: any) => ({
+            ...productType,
+            defaultRoute: `/category/${category.name}/${category.id}/${productType.id}`,
+          })),
+        };
+      });
+
+
+      return categoriesWithDefaultRoutes;
     },
     getCategoryWithProductTypes: async (_: any, { id }: { id: string }, context: any) => {
       const category = await prisma.productCategory.findUnique({
@@ -48,7 +61,6 @@ export default {
               },
             },
           },
-
         },
       });
 
