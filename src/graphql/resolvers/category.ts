@@ -29,7 +29,7 @@ export default {
 
         },
       });
-      console.dir(allCagtegories[0], { depth: null });
+      console.dir(allCategories[0], { depth: null });
 
       const categoriesWithDefaultRoutes = allCategories.map((category: any) => {
         const defaultProductType = category.productTypes[0]; // Grabbing the first product type for the default route
