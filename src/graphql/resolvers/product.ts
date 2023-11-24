@@ -42,12 +42,12 @@ export default {
                 mode: "insensitive",
               },
             },
-            {
-              shortDescription: {
-                contains: filter ? filter : "",
-                mode: "insensitive",
-              },
-            },
+            // {
+            //   shortDescription: {
+            //     contains: filter ? filter : "",
+            //     mode: "insensitive",
+            //   },
+            // },
           ],
         },
         include: {
