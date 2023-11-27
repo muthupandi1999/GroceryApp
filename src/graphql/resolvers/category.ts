@@ -30,8 +30,8 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: { include: { ProductInventory: true } },
-                  AddToCart: { include: { user: true, selectedVariant: true } },
+                  variant: { include: { ProductInventory: true, AddToCart:{where:{userId:"655379d96144626a275e8a14"}} } },
+                  // AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
             },
@@ -67,8 +67,8 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: { include: { ProductInventory: true } },
-                  AddToCart: { include: { user: true, selectedVariant: true } },
+                  variant: { include: { ProductInventory: true, AddToCart:{where:{userId:"655379d96144626a275e8a14"}} } },
+                  // AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
             },
@@ -103,8 +103,8 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: true,
-                  AddToCart: { include: { user: true, selectedVariant: true } },
+                  variant: {include:{AddToCart:{where:{userId:"655379d96144626a275e8a14"}}}},
+                  // AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
             },

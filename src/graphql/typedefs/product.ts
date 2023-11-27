@@ -28,6 +28,7 @@ export default `
     price: Float!
     stock: Int
     ProductInventory:[ProductInventory]
+    AddToCart:AddToCart
   }
 
   type productImageAssets {
@@ -74,7 +75,7 @@ export default `
     isActive: Boolean
     ProductType:ProductType           
     productTypeId: String
-    AddToCart:[AddToCart]
+   
   }
 
   input CreateProductInput {

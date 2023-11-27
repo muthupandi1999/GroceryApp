@@ -56,10 +56,19 @@ export default {
         },
         include: {
           ProductType: true,
-          variant: { include: { ProductInventory: true } },
+          variant: {
+            include: {
+              ProductInventory: true,
+              AddToCart: {
+                where: {
+                  userId: "655379d96144626a275e8a14",
+                },
+              },
+            },
+          },
           image: true,
           ProductInventory: true,
-          AddToCart: { include: { user: true, selectedVariant: true } },
+          // AddToCart: { include: { user: true, selectedVariant: true } },
         },
         orderBy: {
           id: "desc",

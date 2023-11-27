@@ -21,9 +21,10 @@ export default {
               variant: {
                 include: {
                   ProductInventory: true,
+                  AddToCart:{where:{userId:"655379d96144626a275e8a14"}}
                 },
               },
-              AddToCart: { include: { user: true, selectedVariant: true } },
+              // AddToCart: { include: { user: true, selectedVariant: true } },
             },
           },
           productCategory: true,
