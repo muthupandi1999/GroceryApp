@@ -55,5 +55,4 @@ export default `
     deleteCampaingnProduct(productId:ID, campaignId:ID):String!
   }
 
-  
 `;

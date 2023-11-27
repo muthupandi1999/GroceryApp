@@ -340,9 +340,7 @@ export default {
       throw createGraphQLError("user not found", 404);
     },
     updateEmail: async (_: any, { email }: { email: string }) => {
-      console.log("yesssssssss");
       let emailVerify = EmailValidator.validate(email);
-      console.log(emailVerify);
 
       if (emailVerify) {
         const { otp, secret } = await generateOTP();

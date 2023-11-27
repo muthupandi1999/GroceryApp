@@ -12,8 +12,6 @@ export default {
         },
       });
 
-      console.log("banners");
-
       const bannersWithDefaultRoutes = banners.map((banner: any) => {
         return {
           ...banner,
@@ -26,8 +24,6 @@ export default {
           },
         };
       });
-
-      console.log("banner", bannersWithDefaultRoutes);
 
       return bannersWithDefaultRoutes;
     },

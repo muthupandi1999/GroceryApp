@@ -17,18 +17,18 @@ export default {
     getUserOrder: async (_: any, { userId }: any, context: any) => {
       let userOrders = await prisma.order.findMany({
         where: {
-          userId
+          userId,
         },
         include: {
           addToCart: true,
           coupon: true,
           user: true,
           address: true,
-          branch: true
+          branch: true,
         },
-      })
-      return userOrders
-    }
+      });
+      return userOrders;
+    },
   },
   Mutation: {
     placeOrder: async (_: any, { input }: any, context: any) => {
@@ -41,7 +41,7 @@ export default {
           couponId,
           paymentType,
           orderAmount,
-          branchId
+          branchId,
         } = input;
 
         if (!address?.id) {
@@ -50,9 +50,9 @@ export default {
         let orderId = await generateOrderId();
         let pendingOrder = await prisma.order.count({
           where: {
-            "orderStatus": "PENDING"
-          }
-        })
+            orderStatus: "PENDING",
+          },
+        });
         if (pendingOrder <= 50) {
           let placeOrder = await prisma.order.create({
             data: {
@@ -61,8 +61,8 @@ export default {
               orderType: orderType,
               address: address
                 ? {
-                  connect: { id: address.id },
-                }
+                    connect: { id: address.id },
+                  }
                 : undefined,
               addToCart: {
                 connect: addToCartId.map((id: string) => ({ id })),
@@ -94,18 +94,18 @@ export default {
           return {
             status: false,
             paymentType,
-            message: "Please place order after some time currently so many orders are processing right now",
+            message:
+              "Please place order after some time currently so many orders are processing right now",
           };
         }
       } catch (e) {
-        console.log("🚀 ~ file: order.ts:84 ~ placeOrder: ~ e:", e)
+        console.log("🚀 ~ file: order.ts:84 ~ placeOrder: ~ e:", e);
         return {
           status: false,
-          paymentType: 'ERROR',
+          paymentType: "ERROR",
           message: "Something went wrong",
         };
       }
-
     },
     cardPayment: async (_: any, { input }: { input: any }) => {
       const { name, email, userId, orderId, amount, stripeToken } = input;

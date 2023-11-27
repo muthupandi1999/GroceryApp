@@ -43,7 +43,6 @@ export default `
 
   type Query {
     getAddToCartsByUserId(userId: ID!): userAddToCarts
-    
   }
  
   input productInfo {
@@ -51,7 +50,7 @@ export default `
     productId:String
     selectedVariantId: String
     quantity:Int
-}
+  }
 
   type Mutation {
     addToCartProduct(input: addToCartInput!): AddToCart

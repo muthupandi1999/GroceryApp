@@ -26,11 +26,15 @@ export default {
           image: true,
         },
       });
-      console.dir(product?.variant, { depth: null })
+      console.dir(product?.variant, { depth: null });
 
       return product;
     },
-    getAllProducts: async (_: any, { filter }: { filter?: string }, context: any) => {
+    getAllProducts: async (
+      _: any,
+      { filter }: { filter?: string },
+      context: any
+    ) => {
       // const pageSize = 5;
       // const pageNumber = 1;
       let allproducts = await prisma.products.findMany({
@@ -54,10 +58,11 @@ export default {
           ProductType: true,
           variant: { include: { ProductInventory: true } },
           image: true,
-          ProductInventory: true
+          ProductInventory: true,
+          AddToCart: { include: { user: true, selectedVariant: true } },
         },
         orderBy: {
-          id: 'desc',
+          id: "desc",
         },
         // take: pageSize,
         // skip: (pageNumber - 1) * pageSize,
@@ -78,12 +83,14 @@ export default {
       let status = await verifyToken_api(context.token);
       if (status && status?.res?.role.includes("admin")) {
         let image = (await photoUpload(input.image.image)) ?? "";
-        let imageListPromises: Promise<string>[] = input.image.imageList.map(async (item: string) => {
-          return await photoUpload(item) ?? "";
-        });
+        let imageListPromises: Promise<string>[] = input.image.imageList.map(
+          async (item: string) => {
+            return (await photoUpload(item)) ?? "";
+          }
+        );
 
         let imageList: string[] = await Promise.all(imageListPromises);
-        console.log("🚀 ~ file: product.ts:86 ~ imageList:", imageList)
+        console.log("🚀 ~ file: product.ts:86 ~ imageList:", imageList);
 
         let units = input.variant?.map(async (e: any) => {
           let data = await prisma.variants.create({
@@ -98,14 +105,12 @@ export default {
           return data; // Return the created unit data
         });
 
-        // console.log("units", units);
-
         const addOnResults: any = await Promise.all(units);
 
         let imageAssests = await prisma.productAssets.create({
           data: {
             image: image,
-            imageList: imageList ?? []
+            imageList: imageList ?? [],
           },
         });
 
@@ -121,7 +126,7 @@ export default {
             tags: input.tagId ? { connect: { id: input.tagId } } : undefined,
             ProductType: { connect: { id: productTypeId } },
             ProductAssetsId: imageAssests.id,
-            productCode: input.productCode
+            productCode: input.productCode,
             // branchId: branchId ? { connect: { id: input.branchId } } : undefined,
           },
 
@@ -129,7 +134,7 @@ export default {
             ProductType: true,
             variant: true,
             image: true,
-            tags: true
+            tags: true,
           },
         });
       } else {
@@ -155,12 +160,8 @@ export default {
         const { image, units, tagId, ...restInput } = input;
 
         if (existingProduct) {
-          console.log("existingProduct", existingProduct);
-
           let updateAssets: ProductImageAssets | undefined;
           if (image) {
-            console.log("image", image);
-
             //   let updateAss = {
             //     ...image.front(front:await photoUpload(image.front))
             //   }
@@ -229,16 +230,18 @@ export default {
             let imageUpdate = image.image
               ? await photoUpload(image.image)
               : existingProduct.image?.image;
-            let imageListPromises: Promise<string>[] = image.imageList.map(async (item: string) => {
-              return await photoUpload(item) ?? "";
-            });
+            let imageListPromises: Promise<string>[] = image.imageList.map(
+              async (item: string) => {
+                return (await photoUpload(item)) ?? "";
+              }
+            );
             let imageList: string[] = await Promise.all(imageListPromises);
 
             let updateAssets = await prisma.productAssets.update({
               where: { id: existingProduct.ProductAssetsId },
               data: {
                 image: imageUpdate,
-                imageList
+                imageList,
               },
             });
           }
@@ -283,7 +286,10 @@ export default {
 
           return await prisma.products.update({
             where: { id },
-            data: { tags: input.tagId ? { connect: { id: input.tagId } } : undefined, ...restInput },
+            data: {
+              tags: input.tagId ? { connect: { id: input.tagId } } : undefined,
+              ...restInput,
+            },
             include: {
               ProductType: true,
               variant: true,
@@ -300,7 +306,6 @@ export default {
       //   console.log(id, "_____id222");
       //   let status = await verifyToken_api(context.token);
       //   if (status && status?.res?.role.includes("admin")) {
-      console.log(id);
       let status = await verifyToken_api(context.token);
       if (status && status?.res?.role.includes("admin")) {
         let deleteProductExist = await prisma.products.findUnique({

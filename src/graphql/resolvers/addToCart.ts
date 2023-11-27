@@ -6,13 +6,13 @@ import user from "./user";
 export default {
   Query: {
     getAddToCartsByUserId: async (_: any, { userId }: any, context: any) => {
-
       let carts = await prisma.addToCart.findMany({
         where: {
-          userId
+          userId,
         },
         include: {
           product: { include: { image: true } },
+
           user: true,
           selectedVariant: true,
         },
@@ -39,6 +39,7 @@ export default {
         },
         include: {
           selectedVariant: true,
+          product: { include: { image: true } },
         },
       });
 
@@ -52,23 +53,20 @@ export default {
               existAddToCart.selectedVariant!.price * quantity,
           },
           include: {
-            product: { include: { ProductType: true } },
+            product: { include: { ProductType: true, image: true } },
             selectedVariant: true,
             user: true,
-          }
+          },
         });
       } else {
         let productInfo = await prisma.products.findUnique({
           where: { id: productId },
           select: { variant: true },
         });
-        console.log("productInfo", productInfo);
 
         const selectedVariant = productInfo?.variant.find(
           (e: any) => e.id === selectedVariantId
         );
-
-        console.log(selectedVariant);
 
         if (productInfo && selectedVariant) {
           let addProductOnCart = await prisma.addToCart.create({
@@ -141,7 +139,7 @@ export default {
           isOrder: false,
           userId,
           productId,
-          selectedVariantId: variantId
+          selectedVariantId: variantId,
         },
         include: {
           selectedVariant: true,
@@ -149,12 +147,12 @@ export default {
       });
 
       if (cartsExists) {
-        let checkQuantity = cartsExists.quantity + quantity
+        let checkQuantity = cartsExists.quantity + quantity;
         if (!checkQuantity) {
           await prisma.addToCart.delete({
             where: { id: cartsExists.id },
-          })
-          return null
+          });
+          return null;
         }
         return await prisma.addToCart.update({
           where: { id: cartsExists.id },
@@ -165,12 +163,14 @@ export default {
               cartsExists.selectedVariant!.price * quantity,
           },
           include: {
-            product: { include: { ProductType: true } },
+            product: {
+              include: { ProductType: true, image: true, variant: true },
+            },
             selectedVariant: true,
             user: true,
-          }
+          },
         });
       }
-    }
+    },
   },
 };

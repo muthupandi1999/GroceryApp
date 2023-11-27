@@ -74,6 +74,7 @@ export default `
     isActive: Boolean
     ProductType:ProductType           
     productTypeId: String
+    AddToCart:[AddToCart]
   }
 
   input CreateProductInput {

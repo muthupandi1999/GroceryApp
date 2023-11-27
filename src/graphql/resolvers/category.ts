@@ -25,8 +25,17 @@ export default {
     getAllCategories: async (_: any, __: any, context: any) => {
       let allCategories = await prisma.productCategory.findMany({
         include: {
-          productTypes: { include: { products: { include: { image: true, variant: { include: { ProductInventory: true } } } } } },
-
+          productTypes: {
+            include: {
+              products: {
+                include: {
+                  image: true,
+                  variant: { include: { ProductInventory: true } },
+                  AddToCart: { include: { user: true, selectedVariant: true } },
+                },
+              },
+            },
+          },
         },
       });
       console.dir(allCategories[0], { depth: null });
@@ -43,10 +52,13 @@ export default {
         };
       });
 
-
       return categoriesWithDefaultRoutes;
     },
-    getCategoryWithProductTypes: async (_: any, { id }: { id: string }, context: any) => {
+    getCategoryWithProductTypes: async (
+      _: any,
+      { id }: { id: string },
+      context: any
+    ) => {
       const category = await prisma.productCategory.findUnique({
         where: { id },
         include: {
@@ -56,7 +68,7 @@ export default {
                 include: {
                   image: true,
                   variant: { include: { ProductInventory: true } },
-
+                  AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
             },
@@ -64,12 +76,15 @@ export default {
         },
       });
 
-      const products = category?.productTypes.flatMap((productType) =>
-        productType.products
+      const products = category?.productTypes.flatMap(
+        (productType) => productType.products
       );
 
       if (!category) {
-        throw createGraphQLError("Category not found for the specified CategoryId", 500);
+        throw createGraphQLError(
+          "Category not found for the specified CategoryId",
+          500
+        );
       }
 
       return {
@@ -77,7 +92,7 @@ export default {
         name: category?.name,
         image: category?.image,
         isActive: category?.isActive,
-        products
+        products,
       };
     },
     getAllCategoryWithProductTypes: async (_: any, __: any, context: any) => {
@@ -88,30 +103,30 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: true
+                  variant: true,
+                  AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
-
             },
           },
         },
       });
 
       let result = category.map((item: any) => {
-        const products = item?.productTypes.flatMap((productType: any) =>
-          productType.products
+        const products = item?.productTypes.flatMap(
+          (productType: any) => productType.products
         );
         return {
           id: item?.id,
           name: item?.name,
           image: item?.image,
           isActive: item?.isActive,
-          products
+          products,
         };
-      })
+      });
 
       return result;
-    }
+    },
   },
   Mutation: {
     createCategory: async (

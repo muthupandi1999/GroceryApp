@@ -23,11 +23,13 @@ export default {
                   ProductInventory: true,
                 },
               },
+              AddToCart: { include: { user: true, selectedVariant: true } },
             },
           },
-          productCategory: true
+          productCategory: true,
         },
       });
+      console.log("prodcutType", productType);
 
       return productType;
     },

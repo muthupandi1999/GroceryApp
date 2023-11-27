@@ -14,7 +14,7 @@ type discountProductCampaign = {
 };
 type CreateCampaignInput = {
   name: string;
-  description: string
+  description: string;
   startDate: Date;
   endDate: Date;
   image: string;
@@ -23,7 +23,7 @@ type CreateCampaignInput = {
 
 type UpdateCampaignInput = {
   name?: string;
-  description?: string
+  description?: string;
   startDate?: Date;
   endDate?: Date;
   image?: string;
@@ -98,9 +98,6 @@ export default {
       //   let status = await verifyToken_api(context.token);
       const { products, ...restInput } = input;
 
-      console.log(products);
-      console.log(restInput);
-
       //   if (status && status?.res?.role.includes("admin")) {
       const updatesData = products.map(async (e: any) => {
         let updateProduct = await prisma.products.update({
@@ -114,13 +111,12 @@ export default {
       });
 
       let updateAllData = await Promise.all(updatesData);
-      console.log("upfaeAllData", updateAllData);
 
       if (updateAllData) {
         const Campaign = await prisma.campaign.create({
           data: {
             name: restInput.name,
-            description:restInput.description,
+            description: restInput.description,
             startDate: new Date(restInput.startDate),
             endDate: new Date(restInput.endDate),
             image: restInput.image,
@@ -135,7 +131,6 @@ export default {
             products: true,
           },
         });
-        console.log("cap", Campaign);
 
         return Campaign;
       }
@@ -217,7 +212,6 @@ export default {
           },
         },
       });
-      console.log("asdf", deleteProductCampaign);
 
       if (deleteProductCampaign) {
         return "Product removed";

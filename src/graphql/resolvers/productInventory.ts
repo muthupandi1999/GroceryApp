@@ -39,8 +39,13 @@ export default {
       { input }: { input: productInventory }
     ) => {
       try {
-        const { productId, branchId, variantId, availableStock, minimumAvailableStock } =
-          input;
+        const {
+          productId,
+          branchId,
+          variantId,
+          availableStock,
+          minimumAvailableStock,
+        } = input;
 
         //Check prodcut inventory already exists or not
         const exitsProductInventory = await prisma.productInventory.findFirst({
@@ -82,10 +87,9 @@ export default {
         ) {
           let variantInfo = createProductInventory?.variant;
           let productInfo = createProductInventory?.product;
-          let minusStock: number = minusStockFromInventory(variantInfo, availableStock);
-          console.log(
-            "🚀 ~ file: productInventory.ts:53 ~ minusStock:",
-            minusStock
+          let minusStock: number = minusStockFromInventory(
+            variantInfo,
+            availableStock
           );
 
           let supplierProductInventory =
