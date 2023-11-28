@@ -40,6 +40,7 @@ export const updateAddToCart = async (addToCart: any) => {
   });
   addSellingCount(addToCart)
 };
+
 export const addSellingCount = async (addToCart: any) => {
   let carts = await prisma.addToCart.findMany({
     where: {
@@ -88,7 +89,7 @@ export const updateProductInventory = async (addToCart: any, branchId: string) =
       where: {
         productId: productInfo?.id,
         variantId: variantInfo?.id,
-        branchId:branchId
+        branchId: branchId
       },
     });
 
@@ -508,4 +509,33 @@ function parseDuration(durationString: string) {
   }
 
   return totalMinutes;
+}
+
+interface SortOptions {
+  variant?: {
+    price?: 'asc' | 'desc';
+  };
+  name?: 'asc' | 'desc';
+}
+export const sortBy = (filters: string, products: any): SortOptions => {
+  let sortedProducts: any;
+  switch (filters) {
+    case "revelance":
+      return sortedProducts = products
+      break;
+    case "priceHighToLow":
+      return sortedProducts = products?.sort((a: any, b: any) => b.variant[0]?.price - a.variant[0]?.price);
+      break;
+    case "priceLowToHigh":
+      return sortedProducts = products?.sort((a: any, b: any) => a.variant[0]?.price - b.variant[0]?.price);
+      break;
+    case "AToZ":
+      return sortedProducts = products?.sort((a: any, b: any) => a.name > b.name ? 1 : -1);
+      break;
+    case "ZToA":
+      return sortedProducts = products?.sort((a: any, b: any) => a.name > b.name ? -1 : 1);
+      break;
+    default:
+      return sortedProducts = products
+  }
 }

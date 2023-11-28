@@ -32,7 +32,7 @@ export default `
   }
 
   type Query {
-    getProductType(id: ID!): ProductType
+    getProductType(id: ID!,filter:String): ProductType
     getProductTypes: [ProductType]
   }
 

@@ -7,11 +7,12 @@ import {
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "../../types/category.type";
-// import { cloudinary } from "../../config/cloudnary.config";
+import { sortBy } from "../../utils/common";
 
 export default {
   Query: {
-    getProductType: async (_: any, { id }: { id: string }, context: any) => {
+    getProductType: async (_: any, { id, filter }: any, context: any) => {
+
       const productType = await prisma.productTypes.findUnique({
         where: { id },
         include: {
@@ -19,20 +20,23 @@ export default {
             include: {
               image: true,
               variant: {
+                orderBy: {
+                  price: 'asc',
+                },
                 include: {
                   ProductInventory: true,
-                  AddToCart:{where:{userId:"655379d96144626a275e8a14"}}
+                  AddToCart: { where: { userId: "655379d96144626a275e8a14" } },
                 },
               },
-              // AddToCart: { include: { user: true, selectedVariant: true } },
             },
           },
           productCategory: true,
         },
       });
-      console.log("prodcutType", productType);
 
-      return productType;
+      let sortedProducts: any = sortBy(filter, productType?.products);
+      const productTypeWithSorted = { ...productType, products: sortedProducts };
+      return productTypeWithSorted;
     },
     getProductTypes: async (_: any, __: any, context: any) => {
       return await prisma.productTypes.findMany();
