@@ -53,7 +53,7 @@ export default {
               existAddToCart.selectedVariant!.price * quantity,
           },
           include: {
-            product: { include: { ProductType: true, image: true } },
+            product: { include: { ProductType: true, image: true, variant:true, } },
             selectedVariant: true,
             user: true,
           },
