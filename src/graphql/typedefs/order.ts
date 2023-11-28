@@ -78,8 +78,15 @@ type cardPaymentResponse {
     url:String
 }
 
+type getEstimateDeliveryTimeResponse{
+    From:String
+    To:String
+    EstimateTime:String
+}
+
 type Query{
     getUserOrder(userId:String):[Order]
+    getEstimateDeliveryTime(from:String!,to:String!):getEstimateDeliveryTimeResponse
 }
 
 type Mutation {

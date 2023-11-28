@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.config";
+import axios from 'axios';
 const stripe = require("stripe")(
   "sk_test_51NjzQvSAjtfPsOjiGDrQ1QUxVwPTB8Tvc12f2l8Df0TKcc2e5j6wOcTxnMRl8x9bhIB5CFK8GrM5e4PdMhTijoxI00cORNXoOC"
 );
@@ -11,6 +12,7 @@ import {
   createStripeCustomer,
 } from "../../utils/common";
 import { Address } from "../../types/address.type";
+
 
 export default {
   Query: {
@@ -29,6 +31,23 @@ export default {
       });
       return userOrders;
     },
+    getEstimateDeliveryTime: async (_: any, { from, to }: any, context: any) => {
+      try {
+        let key = 'DriPTWkcnSzZzp1k2AkwDd3aLNfrvhPR';
+        let url = `https://www.mapquestapi.com/directions/v2/route?key=${key}&from=${from}&to=${to}&outFormat=json&ambiguities=ignore&routeType=fastest&doReverseGeocode=false&enhancedNarrative=false&avoidTimedConditions=false`;
+        let response = await axios.get(url);
+        // .then((res: any) => console.log(res.data))
+        // .catch((err: any) => console.error(err));
+        console.log(response?.data)
+        return {
+          From: from,
+          To: to,
+          EstimateTime: response?.data?.route?.formattedTime
+        };
+      } catch (e) {
+        return 'something went wrong'
+      }
+    }
   },
   Mutation: {
     placeOrder: async (_: any, { input }: any, context: any) => {
@@ -61,8 +80,8 @@ export default {
               orderType: orderType,
               address: address
                 ? {
-                    connect: { id: address.id },
-                  }
+                  connect: { id: address.id },
+                }
                 : undefined,
               addToCart: {
                 connect: addToCartId.map((id: string) => ({ id })),
