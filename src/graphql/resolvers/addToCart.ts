@@ -38,8 +38,8 @@ export default {
           selectedVariantId: selectedVariantId,
         },
         include: {
-          selectedVariant: true,
-          product: { include: { image: true } },
+          selectedVariant: {include:{AddToCart:true}},
+          product: { include: { image: true , variant:{include:{AddToCart:true}}} },
         },
       });
 
@@ -53,8 +53,8 @@ export default {
               existAddToCart.selectedVariant!.price * quantity,
           },
           include: {
-            product: { include: { ProductType: true, image: true, variant:true, } },
-            selectedVariant: true,
+            product: { include: { ProductType: true, image: true, variant:{include:{AddToCart:true}}, } },
+            selectedVariant: {include:{AddToCart:true}},
             user: true,
           },
         });
@@ -79,8 +79,8 @@ export default {
               ...(deviceToken ? { deviceToken: deviceToken } : {}),
             },
             include: {
-              product: { include: { ProductType: true, image: true } },
-              selectedVariant: true,
+              product: { include: { ProductType: true, image: true, variant:{include:{AddToCart:true}} } },
+              selectedVariant: {include:{AddToCart:true}},
               user: true,
             },
           });
@@ -142,7 +142,7 @@ export default {
           selectedVariantId: variantId,
         },
         include: {
-          selectedVariant: true,
+          selectedVariant: {include:{AddToCart:true}},
         },
       });
 
@@ -164,9 +164,9 @@ export default {
           },
           include: {
             product: {
-              include: { ProductType: true, image: true, variant: true },
+              include: { ProductType: true, image: true, variant: {include:{AddToCart:true}} },
             },
-            selectedVariant: true,
+            selectedVariant: {include:{AddToCart:{include:{product:{include:{variant:{include:{AddToCart:true}}}}, selectedVariant:true, }}}},
             user: true,
           },
         });

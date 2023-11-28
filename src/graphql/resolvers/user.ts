@@ -40,27 +40,30 @@ export default {
     },
   },
   Mutation: {
-    loginViaEmail: async (_: any, { email }: { email: string }) => {
-      let emailVerify = await EmailValidator.validate(email);
-      if (emailVerify) {
-        const { otp, secret } = await generateOTP();
-        //SEND MAIL OTP
-        sendMail(email, otp)
-        await prisma.otpValidationEmail.create({
-          data: {
-            email: email,
-            secret: secret,
-            otp: otp,
-          },
-        });
 
-        return {
-          message: "Otp  successfully send on your email",
-          otp: otp,
-        };
-      }
-      throw createGraphQLError("Enter a valid email", 400);
-    },
+    // loginViaEmail(email: String!): otpStatus
+    // loginEmailOtpValidation(email:String!, otp:String!):userLoginStatus
+    // loginViaEmail: async (_: any, { email }: { email: string }) => {
+    //   let emailVerify = await EmailValidator.validate(email);
+    //   if (emailVerify) {
+    //     const { otp, secret } = await generateOTP();
+    //     //SEND MAIL OTP
+    //     sendMail(email, otp)
+    //     await prisma.otpValidationEmail.create({
+    //       data: {
+    //         email: email,
+    //         secret: secret,
+    //         otp: otp,
+    //       },
+    //     });
+
+    //     return {
+    //       message: "Otp  successfully send on your email",
+    //       otp: otp,
+    //     };
+    //   }
+    //   throw createGraphQLError("Enter a valid email", 400);
+    // },
 
     loginViaPhone: async (_: any, { phoneNo }: { phoneNo: string }) => {
       if (phoneNo.length === 10) {
@@ -81,107 +84,107 @@ export default {
       throw createGraphQLError("Enter a valid number", 400);
     },
 
-    loginEmailOtpValidation: async (
-      _: any,
-      { email, otp }: { email: string; otp: string }
-    ) => {
-      let existData = await prisma.otpValidationEmail.findFirst({
-        where: { email: email },
-      });
+    // loginEmailOtpValidation: async (
+    //   _: any,
+    //   { email, otp }: { email: string; otp: string }
+    // ) => {
+    //   let existData = await prisma.otpValidationEmail.findFirst({
+    //     where: { email: email },
+    //   });
 
-      let limit = existData!.countLimit;
+    //   let limit = existData!.countLimit;
 
-      if (limit < 5) {
-        let otpValid = verifyOtpWithSecret(existData!.secret, otp);
+    //   if (limit < 5) {
+    //     let otpValid = verifyOtpWithSecret(existData!.secret, otp);
 
-        if (!otpValid) {
-          await prisma.otpValidationEmail.update({
-            where: {
-              id: existData?.id,
-            },
-            data: {
-              countLimit: limit + 1,
-            },
-          });
+    //     if (!otpValid) {
+    //       await prisma.otpValidationEmail.update({
+    //         where: {
+    //           id: existData?.id,
+    //         },
+    //         data: {
+    //           countLimit: limit + 1,
+    //         },
+    //       });
 
-          throw createGraphQLError(
-            `you have a ${4 - limit} remaining attempt`,
-            400
-          );
-        } else {
-          let deleteOtp = await prisma.otpValidationEmail.delete({
-            where: { id: existData?.id },
-          });
-          if (deleteOtp) {
-            let userExist = await prisma.user.findUnique({
-              where: {
-                email: email,
-              },
-            });
-            if (!userExist) {
-              let user = await prisma.user.create({
-                data: {
-                  email: email,
-                },
-              });
-              let accessToken = sign(
-                { id: user.id, email: user.email, role: user.role },
-                "secret",
-                {
-                  expiresIn: "1h",
-                }
-              );
+    //       throw createGraphQLError(
+    //         `you have a ${4 - limit} remaining attempt`,
+    //         400
+    //       );
+    //     } else {
+    //       let deleteOtp = await prisma.otpValidationEmail.delete({
+    //         where: { id: existData?.id },
+    //       });
+    //       if (deleteOtp) {
+    //         let userExist = await prisma.user.findUnique({
+    //           where: {
+    //             email: email,
+    //           },
+    //         });
+    //         if (!userExist) {
+    //           let user = await prisma.user.create({
+    //             data: {
+    //               email: email,
+    //             },
+    //           });
+    //           let accessToken = sign(
+    //             { id: user.id, email: user.email, role: user.role },
+    //             "secret",
+    //             {
+    //               expiresIn: "1h",
+    //             }
+    //           );
 
-              let refreshToken = sign(
-                { id: user.id, email: user.email, role: user.role },
-                "secret",
-                { expiresIn: "1d" }
-              );
+    //           let refreshToken = sign(
+    //             { id: user.id, email: user.email, role: user.role },
+    //             "secret",
+    //             { expiresIn: "1d" }
+    //           );
 
-              return {
-                message: "Login successfully",
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                data: user,
-              } as unknown as LoginStatus;
-            } else {
-              let accessToken = sign(
-                {
-                  id: userExist.id,
-                  email: userExist.email,
-                  role: userExist.role,
-                },
-                "secret",
-                {
-                  expiresIn: "1h",
-                }
-              );
+    //           return {
+    //             message: "Login successfully",
+    //             accessToken: accessToken,
+    //             refreshToken: refreshToken,
+    //             data: user,
+    //           } as unknown as LoginStatus;
+    //         } else {
+    //           let accessToken = sign(
+    //             {
+    //               id: userExist.id,
+    //               email: userExist.email,
+    //               role: userExist.role,
+    //             },
+    //             "secret",
+    //             {
+    //               expiresIn: "1h",
+    //             }
+    //           );
 
-              let refreshToken = sign(
-                {
-                  id: userExist.id,
-                  email: userExist.email,
-                  role: userExist.role,
-                },
-                "secret",
-                { expiresIn: "1d" }
-              );
-              return {
-                message: "Login successfully",
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                data: userExist,
-              };
-            }
-          }
-        }
-      } else {
-        throw createGraphQLError(
-          `you have reached the maximum number of attempt, Try again`,
-          400
-        );
-      }
-    },
+    //           let refreshToken = sign(
+    //             {
+    //               id: userExist.id,
+    //               email: userExist.email,
+    //               role: userExist.role,
+    //             },
+    //             "secret",
+    //             { expiresIn: "1d" }
+    //           );
+    //           return {
+    //             message: "Login successfully",
+    //             accessToken: accessToken,
+    //             refreshToken: refreshToken,
+    //             data: userExist,
+    //           };
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     throw createGraphQLError(
+    //       `you have reached the maximum number of attempt, Try again`,
+    //       400
+    //     );
+    //   }
+    // },
 
     loginPhoneNoOtpValidation: async (
       _: any,

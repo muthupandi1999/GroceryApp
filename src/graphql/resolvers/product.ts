@@ -63,6 +63,10 @@ export default {
                 where: {
                   userId: "655379d96144626a275e8a14",
                 },
+                include:{
+                  selectedVariant:true,
+                  product:{include:{variant:{include:{AddToCart:true}}, image:true}}
+                }
               },
             },
           },

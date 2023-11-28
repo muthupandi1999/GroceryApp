@@ -21,7 +21,7 @@ enum Role {
 
 model User {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  email        String?     @unique
+  email        String?     
   firstName    String?
   lastName     String?
   phoneNo      String?     @unique

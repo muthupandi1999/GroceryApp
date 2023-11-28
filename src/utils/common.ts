@@ -1,5 +1,7 @@
 import { prisma } from "../config/prisma.config";
-const stripe = require('stripe')('sk_test_51NjzQvSAjtfPsOjiGDrQ1QUxVwPTB8Tvc12f2l8Df0TKcc2e5j6wOcTxnMRl8x9bhIB5CFK8GrM5e4PdMhTijoxI00cORNXoOC')
+const stripe = require("stripe")(
+  "sk_test_51NjzQvSAjtfPsOjiGDrQ1QUxVwPTB8Tvc12f2l8Df0TKcc2e5j6wOcTxnMRl8x9bhIB5CFK8GrM5e4PdMhTijoxI00cORNXoOC"
+);
 import { Address, Label } from "../types/address.type";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -7,7 +9,7 @@ import {
   sendPushNotificationToMulti,
 } from "./sendPushNotification";
 import transporter from "../services/mail.service";
-import distance from '../config/map.config';
+import distance from "../config/map.config";
 
 export const createAddress = async (input: Address, userId: string) => {
   const { address, apartment, label, pincode } = input;
@@ -38,7 +40,7 @@ export const updateAddToCart = async (addToCart: any) => {
       isOrder: true,
     },
   });
-  addSellingCount(addToCart)
+  addSellingCount(addToCart);
 };
 
 export const addSellingCount = async (addToCart: any) => {
@@ -51,7 +53,7 @@ export const addSellingCount = async (addToCart: any) => {
       quantity: true,
     },
   });
-  console.log("🚀 ~ file: common.ts:53 ~ addSellingCount ~ carts:", carts)
+  console.log("🚀 ~ file: common.ts:53 ~ addSellingCount ~ carts:", carts);
   carts.forEach(async (item: any) => {
     await prisma.products.update({
       where: { id: item.productId },
@@ -61,10 +63,13 @@ export const addSellingCount = async (addToCart: any) => {
         },
       },
     });
-  })
-}
+  });
+};
 
-export const updateProductInventory = async (addToCart: any, branchId: string) => {
+export const updateProductInventory = async (
+  addToCart: any,
+  branchId: string
+) => {
   let products = await prisma.addToCart.findMany({
     where: {
       id: { in: addToCart },
@@ -89,7 +94,7 @@ export const updateProductInventory = async (addToCart: any, branchId: string) =
       where: {
         productId: productInfo?.id,
         variantId: variantInfo?.id,
-        branchId: branchId
+        branchId: branchId,
       },
     });
 
@@ -152,9 +157,9 @@ export const createStripeCustomer = async (name: string, email: string) => {
   let customer = await stripe.customers.create({
     name: name,
     email: email,
-  })
-  return customer.id
-}
+  });
+  return customer.id;
+};
 
 export const sendMail = async (email: string, otp: number) => {
   const mailConfigurations = {
@@ -434,12 +439,12 @@ export const sendMail = async (email: string, otp: number) => {
   transporter.sendMail(mailConfigurations, (error: any, _info: any) => {
     if (error) throw Error(error);
   });
-}
+};
 
 const getEstimateDelivery = async (branchId: string, destinationId: string) => {
   try {
     let branchInfo = await prisma.branch.findUnique({
-      where: { id: branchId }
+      where: { id: branchId },
     });
     if (branchInfo) {
       let startPoint = `${branchInfo.latitude},${branchInfo.longitude}`;
@@ -447,13 +452,13 @@ const getEstimateDelivery = async (branchId: string, destinationId: string) => {
       let data = await distance.get({
         origin: startPoint,
         destination: endPoint,
-      })
+      });
       return data?.duration;
     }
   } catch (e) {
     console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
   }
-}
+};
 
 const checkEstimateDelivery = async (destinationId: string) => {
   try {
@@ -464,23 +469,26 @@ const checkEstimateDelivery = async (destinationId: string) => {
       let data = await distance.get({
         origin: startPoint,
         destination: endPoint,
-      })
+      });
       return {
         branchId: item._id,
-        duration: data?.duration
+        duration: data?.duration,
       };
-    })
+    });
     result.sort((a: any, b: any) => {
       const durationA = parseDuration(a.duration);
       const durationB = parseDuration(b.duration);
       return durationA - durationB;
     });
-    console.log("🚀 ~ file: common.ts:480 ~ checkEstimateDelivery ~ result:", result)
+    console.log(
+      "🚀 ~ file: common.ts:480 ~ checkEstimateDelivery ~ result:",
+      result
+    );
     return result[0];
   } catch (e) {
     console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
   }
-}
+};
 
 function parseDuration(durationString: string) {
   const regex = /(\d+(\.\d+)?) (\w+)/g;
@@ -492,14 +500,14 @@ function parseDuration(durationString: string) {
     const unit = match[3].toLowerCase();
 
     switch (unit) {
-      case 'hours':
+      case "hours":
         totalMinutes += value * 60;
         break;
-      case 'day':
-      case 'days':
+      case "day":
+      case "days":
         totalMinutes += value * 24 * 60; // Convert days to minutes
         break;
-      case 'mins':
+      case "mins":
         totalMinutes += value;
         break;
       default:
@@ -511,31 +519,70 @@ function parseDuration(durationString: string) {
   return totalMinutes;
 }
 
-interface SortOptions {
-  variant?: {
-    price?: 'asc' | 'desc';
-  };
-  name?: 'asc' | 'desc';
-}
-export const sortBy = (filters: string, products: any): SortOptions => {
+// export const sortBy = (filters: string, products: any): SortOptions => {
+//   let sortedProducts: any;
+//   switch (filters) {
+//     case "Revelance":
+//       return sortedProducts = products
+//       break;
+//     case "PriceHighToLow":
+//       return sortedProducts = products?.sort((a: any, b: any) => b.variant[0]?.price - a.variant[0]?.price);
+//       break;
+//     case "PriceLowToHigh":
+//       return sortedProducts = products?.sort((a: any, b: any) => a.variant[0]?.price - b.variant[0]?.price);
+//       break;
+//     case "AToZ":
+//       return sortedProducts = products?.sort((a: any, b: any) => a.name > b.name ? 1 : -1);
+//       break;
+//     case "ZToA":
+//       return sortedProducts = products?.sort((a: any, b: any) => a.name > b.name ? -1 : 1);
+//       break;
+//     default:
+//       return sortedProducts = products
+//   }
+// }
+
+export const sortBy = (filters: string, products: any) => {
   let sortedProducts: any;
+  products = products.map((item: any) => {
+    if (item.dicountPercentage) {
+      item.variant[0].dicountPrice = Math.round(
+        item?.variant?.[0].price -
+          item?.variant?.[0].price * (item?.dicountPercentage / 100)
+      );
+    } else {
+      item.variant[0].dicountPrice = item.variant[0].price;
+    }
+    return item;
+  });
+
   switch (filters) {
-    case "revelance":
-      return sortedProducts = products
-      break;
-    case "priceHighToLow":
-      return sortedProducts = products?.sort((a: any, b: any) => b.variant[0]?.price - a.variant[0]?.price);
-      break;
-    case "priceLowToHigh":
-      return sortedProducts = products?.sort((a: any, b: any) => a.variant[0]?.price - b.variant[0]?.price);
-      break;
+    case "Revelance":
+      return (sortedProducts = products);
+
+    case "PriceHighToLow":
+      return (sortedProducts = products?.sort(
+        (a: any, b: any) =>
+          b.variant[0]?.dicountPrice - a.variant[0]?.dicountPrice
+      ));
+
+    case "PriceLowToHigh":
+      return (sortedProducts = products?.sort(
+        (a: any, b: any) =>
+          a.variant[0]?.dicountPrice - b.variant[0]?.dicountPrice
+      ));
+
     case "AToZ":
-      return sortedProducts = products?.sort((a: any, b: any) => a.name > b.name ? 1 : -1);
-      break;
+      return (sortedProducts = products?.sort((a: any, b: any) =>
+        a.name > b.name ? 1 : -1
+      ));
+
     case "ZToA":
-      return sortedProducts = products?.sort((a: any, b: any) => a.name > b.name ? -1 : 1);
-      break;
+      return (sortedProducts = products?.sort((a: any, b: any) =>
+        a.name > b.name ? -1 : 1
+      ));
+
     default:
-      return sortedProducts = products
+      return (sortedProducts = products);
   }
-}
+};

@@ -31,8 +31,16 @@ export default `
     image: String
   }
 
+  enum SortProducts {
+    Revelance
+    PriceHighToLow
+    PriceLowToHigh
+    AToZ
+    ZToA
+  }
+
   type Query {
-    getProductType(id: ID!,filter:String): ProductType
+    getProductType(id: ID!,filter:SortProducts): ProductType
     getProductTypes: [ProductType]
   }
 

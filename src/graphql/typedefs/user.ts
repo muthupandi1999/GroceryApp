@@ -60,9 +60,9 @@ export default `
   }
 
   type Mutation {
-    loginViaEmail(email: String!): otpStatus
+
     loginViaPhone(phoneNo: String!):otpStatus
-    loginEmailOtpValidation(email:String!, otp:String!):userLoginStatus
+
     loginPhoneNoOtpValidation(phoneNo:String!, otp:String!):userLoginStatus
     updateUserProfile(userId:ID!, input:updateUserInput):userStatus 
     updateEmail(email:String): otpStatus
