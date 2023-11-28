@@ -43,7 +43,7 @@ export default `
 
   type Query {
     getCategory(id: ID!): Category
-    getCategoryWithProductTypes(id: ID!): ProductTypeWithProducts
+    getCategoryWithProductTypes(id: ID!, sliceCount:Int): ProductTypeWithProducts
     getAllCategoryWithProductTypes:[ProductTypeWithProducts]
     getAllCategories: [Category]
   }

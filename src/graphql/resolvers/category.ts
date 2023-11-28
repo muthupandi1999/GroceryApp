@@ -30,7 +30,7 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: { include: { ProductInventory: true, AddToCart:{where:{userId:"655379d96144626a275e8a14"}} } },
+                  variant: { include: { ProductInventory: true, AddToCart:{where:{userId:"655379d96144626a275e8a14"}}, } },
                   // AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
@@ -56,9 +56,10 @@ export default {
     },
     getCategoryWithProductTypes: async (
       _: any,
-      { id }: { id: string },
+      { id, sliceCount }: { id: string, sliceCount?:number },
       context: any
     ) => {
+      console.log("slice", sliceCount)
       const category = await prisma.productCategory.findUnique({
         where: { id },
         include: {
@@ -101,6 +102,7 @@ export default {
           productTypes: {
             include: {
               products: {
+                take: 1,
                 include: {
                   image: true,
                   variant: {include:{AddToCart:{where:{userId:"655379d96144626a275e8a14"}}}},
