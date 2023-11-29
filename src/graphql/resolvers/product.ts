@@ -84,6 +84,7 @@ export default {
         // skip: (pageNumber - 1) * pageSize,
       });
       console.dir(allproducts[0], { depth: null });
+      // pubsub.publish('PRODUCT_UPDATED', { productUpdated: allproducts });
       return allproducts;
     },
   },
@@ -163,162 +164,178 @@ export default {
       { id, input }: { id: string; input: UpdateProductInput },
       context: any
     ) => {
-      let status = await verifyToken_api(context.token);
-      if (status && status?.res?.role.includes("admin")) {
-        let existingProduct = await prisma.products.findUnique({
-          where: { id },
-          include: {
-            image: true,
-            variant: true,
-          },
-        });
+      // let status = await verifyToken_api(context.token);
+      // if (status && status?.res?.role.includes("admin")) {
+      let existingProduct = await prisma.products.findUnique({
+        where: { id },
+        include: {
+          image: true,
+          variant: true,
+        },
+      });
 
-        const { image, units, tagId, ...restInput } = input;
+      const { image, units, tagId, ...restInput } = input;
 
-        if (existingProduct) {
-          let updateAssets: ProductImageAssets | undefined;
-          if (image) {
-            //   let updateAss = {
-            //     ...image.front(front:await photoUpload(image.front))
-            //   }
+      if (existingProduct) {
+        let updateAssets: ProductImageAssets | undefined;
+        if (image) {
+          //   let updateAss = {
+          //     ...image.front(front:await photoUpload(image.front))
+          //   }
 
-            //   // Update image fields if provided
-            //   let imageFront = image.front
-            //     ? await photoUpload(image.front)
-            //     : existingProduct.image?.front;
-            //   let imageBack = image.back
-            //     ? await photoUpload(image.back)
-            //     : existingProduct.image?.back;
-            //   let imageleft = image.left
-            //     ? await photoUpload(image.left)
-            //     : existingProduct.image?.left;
-            //   let imageRight = image.right
-            //     ? await photoUpload(image.right)
-            //     : existingProduct.image?.right;
+          //   // Update image fields if provided
+          //   let imageFront = image.front
+          //     ? await photoUpload(image.front)
+          //     : existingProduct.image?.front;
+          //   let imageBack = image.back
+          //     ? await photoUpload(image.back)
+          //     : existingProduct.image?.back;
+          //   let imageleft = image.left
+          //     ? await photoUpload(image.left)
+          //     : existingProduct.image?.left;
+          //   let imageRight = image.right
+          //     ? await photoUpload(image.right)
+          //     : existingProduct.image?.right;
 
-            //   type ImageFields = keyof ImageData;
-            //   // Destroy old cloudinary images
-            //   for (const field of [
-            //     "front",
-            //     "back",
-            //     "left",
-            //     "right",
-            //   ] as ImageFields[]) {
-            //     if (image[field] && existingProduct.image) {
-            //       const publicId = RegExp(/\/v\d+\/(.*?)\./).exec(
-            //         existingProduct.image[field]
-            //       )?.[1];
-            //       if (publicId) {
-            //         await cloudinary.uploader.destroy(publicId);
-            //       }
-            //     }
-            //   }
-            // const updatedImageData: Partial<ImageData> = {};
+          //   type ImageFields = keyof ImageData;
+          //   // Destroy old cloudinary images
+          //   for (const field of [
+          //     "front",
+          //     "back",
+          //     "left",
+          //     "right",
+          //   ] as ImageFields[]) {
+          //     if (image[field] && existingProduct.image) {
+          //       const publicId = RegExp(/\/v\d+\/(.*?)\./).exec(
+          //         existingProduct.image[field]
+          //       )?.[1];
+          //       if (publicId) {
+          //         await cloudinary.uploader.destroy(publicId);
+          //       }
+          //     }
+          //   }
+          // const updatedImageData: Partial<ImageData> = {};
 
-            // Loop through the image fields and update if a new image is provided
-            // for (const field of ["front", "back", "left", "right"] as Array<
-            //   keyof ImageData
-            // >) {
-            //   if (image[field]) {
-            //     updatedImageData[field] = await photoUpload(image[field]);
+          // Loop through the image fields and update if a new image is provided
+          // for (const field of ["front", "back", "left", "right"] as Array<
+          //   keyof ImageData
+          // >) {
+          //   if (image[field]) {
+          //     updatedImageData[field] = await photoUpload(image[field]);
 
-            //     // Destroy old cloudinary images
-            //     if (existingProduct.image && existingProduct.image[field]) {
-            //       const publicId = RegExp(/\/v\d+\/(.*?)\./).exec(
-            //         existingProduct.image[field]
-            //       )?.[1];
-            //       if (publicId) {
-            //         await cloudinary.uploader.destroy(publicId);
-            //       }
-            //     }
-            //   } else if (existingProduct.image) {
-            //     // If no new image is provided, retain the existing image
-            //     updatedImageData[field] = existingProduct.image[field];
-            //   }
-            // }
+          //     // Destroy old cloudinary images
+          //     if (existingProduct.image && existingProduct.image[field]) {
+          //       const publicId = RegExp(/\/v\d+\/(.*?)\./).exec(
+          //         existingProduct.image[field]
+          //       )?.[1];
+          //       if (publicId) {
+          //         await cloudinary.uploader.destroy(publicId);
+          //       }
+          //     }
+          //   } else if (existingProduct.image) {
+          //     // If no new image is provided, retain the existing image
+          //     updatedImageData[field] = existingProduct.image[field];
+          //   }
+          // }
 
-            // updateAssets = await prisma.productAssets.update({
-            //   where: { id: existingProduct.ProductAssetsId },
-            //   data: updatedImageData,
-            // });
+          // updateAssets = await prisma.productAssets.update({
+          //   where: { id: existingProduct.ProductAssetsId },
+          //   data: updatedImageData,
+          // });
 
-            //new
-            let imageUpdate = image.image
-              ? await photoUpload(image.image)
-              : existingProduct.image?.image;
-            let imageListPromises: Promise<string>[] = image.imageList.map(
-              async (item: string) => {
-                return (await photoUpload(item)) ?? "";
-              }
-            );
-            let imageList: string[] = await Promise.all(imageListPromises);
+          //new
+          let imageUpdate = image.image
+            ? await photoUpload(image.image)
+            : existingProduct.image?.image;
+          let imageListPromises: Promise<string>[] = image.imageList.map(
+            async (item: string) => {
+              return (await photoUpload(item)) ?? "";
+            }
+          );
+          let imageList: string[] = await Promise.all(imageListPromises);
 
-            let updateAssets = await prisma.productAssets.update({
-              where: { id: existingProduct.ProductAssetsId },
-              data: {
-                image: imageUpdate,
-                imageList,
-              },
-            });
-          }
-
-          let updatedUnitData: any;
-          if (units) {
-            console.log("units");
-            const updatedUnits = units.map(async (e: any) => {
-              if (e.id) {
-                // If the unit has an ID, it's an existing unit, so update it
-                return prisma.variants.update({
-                  where: { id: e.id },
-                  data: {
-                    unit: e.unit,
-                    price: e.price,
-                  },
-                });
-              } else {
-                // If the unit doesn't have an ID, it's a new unit, so create it
-                return prisma.variants.create({
-                  data: {
-                    unit: e.unit,
-                    price: e.price,
-                    productsId: id,
-                    values: e.values,
-                  },
-                });
-              }
-            });
-
-            updatedUnitData = await Promise.all(updatedUnits);
-          }
-
-          // const updatedProduct = {
-          //   ...(updateAssets || {}),
-          //   ...(updatedUnitData || {}),
-
-          //   ...restInput,
-          // };
-
-          // console.log(updatedProduct);
-          let updatedProduct = await prisma.products.update({
-            where: { id },
+          let updateAssets = await prisma.productAssets.update({
+            where: { id: existingProduct.ProductAssetsId },
             data: {
-              tags: input.tagId ? { connect: { id: input.tagId } } : undefined,
-              ...restInput,
-            },
-            include: {
-              ProductType: true,
-              variant: true,
-              image: true,
+              image: imageUpdate,
+              imageList,
             },
           });
-          pubsub.publish('PRODUCT_UPDATED', { Product: updatedProduct });
-          return updatedProduct;
         }
-        throw createGraphQLError("product not found", 404);
-      } else {
-        throw createGraphQLError("Access Denied", 403);
+
+        let updatedUnitData: any;
+        if (units) {
+          console.log("units");
+          const updatedUnits = units.map(async (e: any) => {
+            if (e.id) {
+              // If the unit has an ID, it's an existing unit, so update it
+              return prisma.variants.update({
+                where: { id: e.id },
+                data: {
+                  unit: e.unit,
+                  price: e.price,
+                },
+              });
+            } else {
+              // If the unit doesn't have an ID, it's a new unit, so create it
+              return prisma.variants.create({
+                data: {
+                  unit: e.unit,
+                  price: e.price,
+                  productsId: id,
+                  values: e.values,
+                },
+              });
+            }
+          });
+
+          updatedUnitData = await Promise.all(updatedUnits);
+        }
+
+        // const updatedProduct = {
+        //   ...(updateAssets || {}),
+        //   ...(updatedUnitData || {}),
+
+        //   ...restInput,
+        // };
+
+        // console.log(updatedProduct);
+        let updatedProduct = await prisma.products.update({
+          where: { id },
+          data: {
+            tags: input.tagId ? { connect: { id: input.tagId } } : undefined,
+            ...restInput,
+          },
+          include: {
+            ProductType: true,
+            variant: {
+              include: {
+                ProductInventory: true,
+                AddToCart: {
+                  where: {
+                    userId: "655379d96144626a275e8a14",
+                  },
+                  include: {
+                    selectedVariant: true,
+                    product: { include: { variant: { include: { AddToCart: true } }, image: true } }
+                  }
+                },
+              },
+            },
+            image: true,
+            ProductInventory: true,
+            // AddToCart: { include: { user: true, selectedVariant: true } },
+          }
+        });
+        subscriptionsProduct()
+        return updatedProduct;
       }
+      throw createGraphQLError("product not found", 404);
+      // } else {
+      //   throw createGraphQLError("Access Denied", 403);
+      // }
     },
+
     deleteProduct: async (_: any, { id }: { id: string }, context: any) => {
       //   console.log(id, "_____id222");
       //   let status = await verifyToken_api(context.token);
@@ -371,7 +388,36 @@ export default {
   },
   Subscription: {
     productUpdated: {
-      subscribe: async () => pubsub.asyncIterator("PRODUCT_UPDATED"),
+      subscribe: () => pubsub.asyncIterator('PRODUCT_UPDATED'),
     },
   },
 };
+
+const subscriptionsProduct = async () => {
+  let allproducts = await prisma.products.findMany({
+    include: {
+      ProductType: true,
+      variant: {
+        include: {
+          ProductInventory: true,
+          AddToCart: {
+            where: {
+              userId: "655379d96144626a275e8a14",
+            },
+            include: {
+              selectedVariant: true,
+              product: { include: { variant: { include: { AddToCart: true } }, image: true } }
+            }
+          },
+        },
+      },
+      image: true,
+      ProductInventory: true,
+    },
+    orderBy: {
+      id: "desc",
+    },
+  });
+  console.dir(allproducts[0], { depth: null });
+  pubsub.publish('PRODUCT_UPDATED', { productUpdated: allproducts });
+}

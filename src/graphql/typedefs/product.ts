@@ -114,7 +114,7 @@ export default `
   }
 
   type Subscription {
-    productUpdated: Products
+    productUpdated: [Products]
   }
 
 `;

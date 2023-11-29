@@ -27,7 +27,7 @@ const startServer = async () => {
   // Creating the WebSocket server
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: '/subscriptions',
+    path: '/graphql',
   });
 
   // WebSocketServer start listening.
@@ -56,7 +56,7 @@ const startServer = async () => {
   });
 
   await server.start();
-  
+
   app.use(
     "/graphql",
     cors<cors.CorsRequest>(),
