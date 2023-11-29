@@ -12,7 +12,7 @@ export default {
         },
         include: {
           product: {
-            include: {ProductType:true, image: true, variant: { include:{AddToCart:true} } },
+            include: {ProductType:{include:{productCategory:true}}, image: true, variant: { include:{AddToCart:true} } },
           },
           user: true,
           selectedVariant: { include: { AddToCart: true } } ,
