@@ -11,20 +11,25 @@ export default {
           userId,
         },
         include: {
-          product: { include: { image: true } },
-
+          product: {
+            include: {ProductType:true, image: true, variant: { include:{AddToCart:true} } },
+          },
           user: true,
-          selectedVariant: true,
+          selectedVariant: { include: { AddToCart: true } } ,
         },
       });
 
-      let totalPrice = carts.reduce((acc: number, cartItem: any) => {
-        return acc + cartItem.totalPrice;
-      }, 0);
-      return {
-        carts: carts,
-        subTotal: totalPrice,
-      };
+      if (carts) {
+        let totalPrice = carts.reduce((acc: number, cartItem: any) => {
+          return acc + cartItem.totalPrice;
+        }, 0);
+        if (totalPrice) {
+          return {
+            carts: carts,
+            subTotal: totalPrice,
+          };
+        }
+      }
     },
   },
   Mutation: {
@@ -38,8 +43,8 @@ export default {
           selectedVariantId: selectedVariantId,
         },
         include: {
-          selectedVariant: {include:{AddToCart:true}},
-          product: { include: { image: true , variant:{include:{AddToCart:true}}} },
+          selectedVariant: true,
+          product: { include: { image: true } },
         },
       });
 
@@ -53,8 +58,10 @@ export default {
               existAddToCart.selectedVariant!.price * quantity,
           },
           include: {
-            product: { include: { ProductType: true, image: true, variant:{include:{AddToCart:true}}, } },
-            selectedVariant: {include:{AddToCart:true}},
+            product: {
+              include: { ProductType: true, image: true, variant: true },
+            },
+            selectedVariant: true,
             user: true,
           },
         });
@@ -79,8 +86,8 @@ export default {
               ...(deviceToken ? { deviceToken: deviceToken } : {}),
             },
             include: {
-              product: { include: { ProductType: true, image: true, variant:{include:{AddToCart:true}} } },
-              selectedVariant: {include:{AddToCart:true}},
+              product: { include: { ProductType: true, image: true } },
+              selectedVariant: true,
               user: true,
             },
           });
@@ -142,7 +149,7 @@ export default {
           selectedVariantId: variantId,
         },
         include: {
-          selectedVariant: {include:{AddToCart:true}},
+          selectedVariant: true,
         },
       });
 
@@ -164,9 +171,14 @@ export default {
           },
           include: {
             product: {
-              include: { ProductType: true, image: true, variant: {include:{AddToCart:true}} },
+              include: {
+                ProductType: true,
+                image: true,
+                variant: { include: { AddToCart: true } },
+              },
             },
-            selectedVariant: {include:{AddToCart:{include:{product:{include:{variant:{include:{AddToCart:true}}}}, selectedVariant:true, }}}},
+            selectedVariant: true,
+
             user: true,
           },
         });
