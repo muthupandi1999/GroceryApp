@@ -30,7 +30,14 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: { include: { ProductInventory: true, AddToCart:{where:{userId:"655379d96144626a275e8a14"}}, } },
+                  variant: {
+                    include: {
+                      ProductInventory: true,
+                      AddToCart: {
+                        where: { userId: "655379d96144626a275e8a14" },
+                      },
+                    },
+                  },
                   // AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
@@ -56,10 +63,10 @@ export default {
     },
     getCategoryWithProductTypes: async (
       _: any,
-      { id, sliceCount }: { id: string, sliceCount?:number },
+      { id, sliceCount }: { id: string; sliceCount?: number },
       context: any
     ) => {
-      console.log("slice", sliceCount)
+      console.log("slice", sliceCount);
       const category = await prisma.productCategory.findUnique({
         where: { id },
         include: {
@@ -68,7 +75,14 @@ export default {
               products: {
                 include: {
                   image: true,
-                  variant: { include: { ProductInventory: true, AddToCart:{where:{userId:"655379d96144626a275e8a14"}} } },
+                  variant: {
+                    include: {
+                      ProductInventory: true,
+                      AddToCart: {
+                        where: { userId: "655379d96144626a275e8a14" },
+                      },
+                    },
+                  },
                   // AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
@@ -77,24 +91,25 @@ export default {
         },
       });
 
-      const products = category?.productTypes.flatMap(
-        (productType) => productType.products
-      );
-
-      if (!category) {
+      if (category) {
+        const products = category?.productTypes.flatMap(
+          (productType) => productType.products
+        );
+        if (products) {
+          return {
+            id: category?.id,
+            name: category?.name,
+            image: category?.image,
+            isActive: category?.isActive,
+            products,
+          };
+        }
+      } else {
         throw createGraphQLError(
           "Category not found for the specified CategoryId",
           500
         );
       }
-
-      return {
-        id: category?.id,
-        name: category?.name,
-        image: category?.image,
-        isActive: category?.isActive,
-        products,
-      };
     },
     getAllCategoryWithProductTypes: async (_: any, __: any, context: any) => {
       const category = await prisma.productCategory.findMany({
@@ -105,7 +120,13 @@ export default {
                 take: 1,
                 include: {
                   image: true,
-                  variant: {include:{AddToCart:{where:{userId:"655379d96144626a275e8a14"}}}},
+                  variant: {
+                    include: {
+                      AddToCart: {
+                        where: { userId: "655379d96144626a275e8a14" },
+                      },
+                    },
+                  },
                   // AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },

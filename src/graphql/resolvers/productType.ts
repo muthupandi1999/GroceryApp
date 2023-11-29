@@ -11,17 +11,17 @@ import { sortBy } from "../../utils/common";
 
 export default {
   Query: {
-    getProductType: async (_: any, { id, filter }: any, context: any) => {
-
+    getProductTypeId: async (_: any, { id, filter }: any, context: any) => {
       const productType = await prisma.productTypes.findUnique({
         where: { id },
         include: {
           products: {
             include: {
+              ProductType: true,
               image: true,
               variant: {
                 orderBy: {
-                  price: 'asc',
+                  price: "asc",
                 },
                 include: {
                   ProductInventory: true,
@@ -35,11 +35,33 @@ export default {
       });
 
       let sortedProducts: any = sortBy(filter, productType?.products);
-      const productTypeWithSorted = { ...productType, products: sortedProducts };
+      const productTypeWithSorted = {
+        ...productType,
+        products: sortedProducts,
+      };
       return productTypeWithSorted;
     },
     getProductTypes: async (_: any, __: any, context: any) => {
-      return await prisma.productTypes.findMany();
+      return await prisma.productTypes.findMany({
+        include: {
+          products: {
+            include: {
+              ProductType: true,
+              image: true,
+              variant: {
+                orderBy: {
+                  price: "asc",
+                },
+                include: {
+                  ProductInventory: true,
+                  AddToCart: { where: { userId: "655379d96144626a275e8a14" } },
+                },
+              },
+            },
+          },
+          productCategory: true,
+        },
+      });
     },
   },
   Mutation: {

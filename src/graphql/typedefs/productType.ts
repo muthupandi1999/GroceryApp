@@ -40,7 +40,7 @@ export default `
   }
 
   type Query {
-    getProductType(id: ID!,filter:SortProducts): ProductType
+    getProductTypeId(id: ID!,filter:SortProducts): ProductType
     getProductTypes: [ProductType]
   }
 
