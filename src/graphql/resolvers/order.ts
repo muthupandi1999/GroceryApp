@@ -37,11 +37,16 @@ export default {
     ) => {
       try {
         let key = "DriPTWkcnSzZzp1k2AkwDd3aLNfrvhPR";
+        const fromLat = 9.9483648;
+        const fromLng = 78.1451264;
+        const toLat = 9.9489;
+        const toLng = 78.0976;
         let url = `https://www.mapquestapi.com/directions/v2/route?key=${key}&from=${from}&to=${to}&outFormat=json&ambiguities=ignore&routeType=fastest&doReverseGeocode=false&enhancedNarrative=false&avoidTimedConditions=false`;
+        // let url = `https://www.mapquestapi.com/directions/v2/route?key=${key}&from=${fromLat},${fromLng}&to=${toLat},${toLng}&outFormat=json&ambiguities=ignore&routeType=fastest&doReverseGeocode=false&enhancedNarrative=false&avoidTimedConditions=false`
         let response: any = await axios.get(url);
         // .then((res: any) => console.log(res.data))
         // .catch((err: any) => console.error(err));
-        console.log(response?.data);
+        console.dir(response?.data, { depth: null });
         return {
           From: from,
           To: to,
@@ -83,8 +88,8 @@ export default {
               orderType: orderType,
               address: address
                 ? {
-                    connect: { id: address.id },
-                  }
+                  connect: { id: address.id },
+                }
                 : undefined,
               addToCart: {
                 connect: addToCartId.map((id: string) => ({ id })),
