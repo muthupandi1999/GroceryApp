@@ -29,6 +29,7 @@ export default `
     stock: Int
     ProductInventory:[ProductInventory]
     AddToCart:AddToCart
+    product:Products
   }
 
   type productImageAssets {
@@ -105,6 +106,7 @@ export default `
   type Query {
     getProduct(id: ID!): Products
     getAllProducts(filter:String): [Products]
+    getProductVariant(id:ID!):variants
   }
 
   type Mutation {

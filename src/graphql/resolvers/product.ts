@@ -83,6 +83,13 @@ export default {
       console.dir(allproducts[0], { depth: null });
       return allproducts;
     },
+    getProductVariant: async (_: any, { id }: { id: string }) => {
+      let variant = await prisma.variants.findUnique({
+        where: { id },
+        include: { product: true },
+      });
+      return variant;
+    },
   },
   Mutation: {
     createProduct: async (

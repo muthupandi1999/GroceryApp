@@ -70,7 +70,7 @@ export default `
     updatePhoneNo(phoneNo:String): otpStatus
     phoneNoVerifyUpdate(userId:ID!,otp:String!, phoneNo:String!):userStatus
     accessTokenGenerate(refreshToken: String!): String!
-
+    
 
     
   }
