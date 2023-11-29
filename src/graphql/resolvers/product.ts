@@ -15,6 +15,10 @@ import {
   ImageData,
 } from "../../types/product.type";
 
+//ws
+import { PubSub } from 'graphql-subscriptions';
+const pubsub = new PubSub();
+
 export default {
   Query: {
     getProduct: async (_: any, { id }: { id: string }, context: any) => {
@@ -27,7 +31,6 @@ export default {
         },
       });
       console.dir(product?.variant, { depth: null });
-
       return product;
     },
     getAllProducts: async (
@@ -63,9 +66,9 @@ export default {
                 where: {
                   userId: "655379d96144626a275e8a14",
                 },
-                include:{
-                  selectedVariant:true,
-                  product:{include:{variant:{include:{AddToCart:true}}, image:true}}
+                include: {
+                  selectedVariant: true,
+                  product: { include: { variant: { include: { AddToCart: true } }, image: true } }
                 }
               },
             },
@@ -296,8 +299,7 @@ export default {
           // };
 
           // console.log(updatedProduct);
-
-          return await prisma.products.update({
+          let updatedProduct = await prisma.products.update({
             where: { id },
             data: {
               tags: input.tagId ? { connect: { id: input.tagId } } : undefined,
@@ -309,6 +311,8 @@ export default {
               image: true,
             },
           });
+          pubsub.publish('PRODUCT_UPDATED', { Product: updatedProduct });
+          return updatedProduct;
         }
         throw createGraphQLError("product not found", 404);
       } else {
@@ -363,6 +367,11 @@ export default {
       } else {
         throw createGraphQLError("Access Denied", 403);
       }
+    },
+  },
+  Subscription: {
+    productUpdated: {
+      subscribe: async () => pubsub.asyncIterator("PRODUCT_UPDATED"),
     },
   },
 };
