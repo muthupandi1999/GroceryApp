@@ -11,6 +11,12 @@ import { setHttpPlugin } from "./plugins/error.plugin";
 
 import { connectRedis } from "./config/redis";
 import { promoExpiery } from "./cron/promo.cron";
+
+//ws
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+
 const startServer = async () => {
   // Create an Express app and HTTP server; we will attach the WebSocket
   // server and the ApolloServer to this HTTP server.
@@ -18,19 +24,39 @@ const startServer = async () => {
   // connectRedis();
   const httpServer = createServer(app);
 
+  // Creating the WebSocket server
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/graphql',
+  });
+
+  // WebSocketServer start listening.
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+  const serverCleanup = useServer({ schema }, wsServer);
+
   promoExpiery.start();
   // Set up ApolloServer.
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema,
     plugins: [
       // Proper shutdown for the HTTP server.
       ApolloServerPluginDrainHttpServer({ httpServer }),
       // setHttpPlugin,
+      // Proper shutdown for the WebSocket server.
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
     ],
   });
 
   await server.start();
+
   app.use(
     "/graphql",
     cors<cors.CorsRequest>(),

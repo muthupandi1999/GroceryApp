@@ -115,4 +115,8 @@ export default `
     deleteProduct(id: ID!): productStatus  
   }
 
+  type Subscription {
+    productUpdated: [Products]
+  }
+
 `;
