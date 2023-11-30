@@ -15,9 +15,7 @@ import {
   ImageData,
 } from "../../types/product.type";
 
-//ws
-import { PubSub } from 'graphql-subscriptions';
-const pubsub = new PubSub();
+
 
 export default {
   Query: {
@@ -64,7 +62,7 @@ export default {
               ProductInventory: true,
               AddToCart: {
                 where: {
-                  userId: "655379d96144626a275e8a14",
+                  userId: "65642fcb264c4f37a0b129be",
                 },
                 include: {
                   selectedVariant: true,
@@ -320,7 +318,7 @@ export default {
                 ProductInventory: true,
                 AddToCart: {
                   where: {
-                    userId: "655379d96144626a275e8a14",
+                    userId: "65642fcb264c4f37a0b129be",
                   },
                   include: {
                     selectedVariant: true,
@@ -334,7 +332,7 @@ export default {
             // AddToCart: { include: { user: true, selectedVariant: true } },
           }
         });
-        subscriptionsProduct()
+        // subscriptionsProduct()
         return updatedProduct;
       }
       throw createGraphQLError("product not found", 404);
@@ -393,38 +391,34 @@ export default {
       }
     },
   },
-  Subscription: {
-    productUpdated: {
-      subscribe: () => pubsub.asyncIterator('PRODUCT_UPDATED'),
-    },
-  },
+
 };
 
-const subscriptionsProduct = async () => {
-  let allproducts = await prisma.products.findMany({
-    include: {
-      ProductType: true,
-      variant: {
-        include: {
-          ProductInventory: true,
-          AddToCart: {
-            where: {
-              userId: "655379d96144626a275e8a14",
-            },
-            include: {
-              selectedVariant: true,
-              product: { include: { variant: { include: { AddToCart: true } }, image: true } }
-            }
-          },
-        },
-      },
-      image: true,
-      ProductInventory: true,
-    },
-    orderBy: {
-      id: "desc",
-    },
-  });
-  console.dir(allproducts[0], { depth: null });
-  pubsub.publish('PRODUCT_UPDATED', { productUpdated: allproducts });
-}
+// const subscriptionsProduct = async () => {
+//   let allproducts = await prisma.products.findMany({
+//     include: {
+//       ProductType: true,
+//       variant: {
+//         include: {
+//           ProductInventory: true,
+//           AddToCart: {
+//             where: {
+//               userId: "65642fcb264c4f37a0b129be",
+//             },
+//             include: {
+//               selectedVariant: true,
+//               product: { include: { variant: { include: { AddToCart: true } }, image: true } }
+//             }
+//           },
+//         },
+//       },
+//       image: true,
+//       ProductInventory: true,
+//     },
+//     orderBy: {
+//       id: "desc",
+//     },
+//   });
+//   console.dir(allproducts[0], { depth: null });
+ 
+// }

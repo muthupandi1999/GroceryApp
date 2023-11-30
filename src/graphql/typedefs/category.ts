@@ -53,4 +53,8 @@ export default `
     updateCategory(id: ID!, input: UpdateCategoryInput!): Category
     deleteCategory(id: ID!): categoryStatus
   }
+
+  type Subscription {
+    categoryProductType: ProductTypeWithProducts
+  }
 `;

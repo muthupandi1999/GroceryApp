@@ -10,6 +10,7 @@ import {
 import { isFeatured } from "../../types/enums";
 // import { cloudinary } from "../../config/cloudnary.config";
 
+
 export default {
   Query: {
     getCategory: async (_: any, { id }: { id: string }, context: any) => {
@@ -34,7 +35,7 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "655379d96144626a275e8a14" },
+                        where: { userId: "65642fcb264c4f37a0b129be" },
                       },
                     },
                   },
@@ -79,7 +80,7 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "655379d96144626a275e8a14" },
+                        where: { userId: "65642fcb264c4f37a0b129be" },
                       },
                     },
                   },
@@ -96,13 +97,15 @@ export default {
           (productType) => productType.products
         );
         if (products) {
-          return {
-            id: category?.id,
-            name: category?.name,
-            image: category?.image,
-            isActive: category?.isActive,
-            products,
-          };
+            let data = {
+              id: category?.id,
+              name: category?.name,
+              image: category?.image,
+              isActive: category?.isActive,
+              products,
+            }
+          
+          return data;
         }
       } else {
         throw createGraphQLError(
@@ -123,7 +126,7 @@ export default {
                   variant: {
                     include: {
                       AddToCart: {
-                        where: { userId: "655379d96144626a275e8a14" },
+                        where: { userId: "65642fcb264c4f37a0b129be" },
                       },
                     },
                   },
@@ -219,4 +222,10 @@ export default {
       throw createGraphQLError("Error something wrong on delete category", 500);
     },
   },
+  // Subscription: {
+  //   categoryProductType: {
+  //     subscribe: () => pubsub.asyncIterator('CATEGORY_WITH_PRODUCTYPES'),
+  //   },
+    
+  // },
 };
