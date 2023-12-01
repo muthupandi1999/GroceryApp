@@ -2,6 +2,11 @@ import { prisma } from "../../config/prisma.config";
 import createGraphQLError from "../../errors/graphql.error";
 import { verifyToken_api } from "../../validation/token.validation";
 import user from "./user";
+import { PubSub } from "graphql-subscriptions";
+import { sortBy } from "../../utils/common";
+
+
+const pubsub = new PubSub();
 
 export default {
   Query: {
@@ -13,7 +18,13 @@ export default {
         include: {
           product: {
             include: {
-              ProductType: { include: { productCategory: true } },
+              ProductType: {
+                include: {
+                  products: {
+                    include: { variant: { include: { AddToCart: true } } },
+                  },
+                },
+              },
               image: true,
               variant: { include: { AddToCart: true } },
             },
@@ -165,7 +176,8 @@ export default {
           });
           return null;
         }
-        return await prisma.addToCart.update({
+
+        let data = await prisma.addToCart.update({
           where: { id: cartsExists.id },
           data: {
             quantity: cartsExists.quantity + quantity,
@@ -186,7 +198,20 @@ export default {
             user: true,
           },
         });
+
+        if (data) {
+          await pubsub.publish("UPDATE_CART", {
+            updateCart: data,
+          });
+          return data;
+        }
       }
+    },
+  },
+
+  Subscription: {
+    updateCart: {
+      subscribe: async () => pubsub.asyncIterator("UPDATE_CART"),
     },
   },
 };

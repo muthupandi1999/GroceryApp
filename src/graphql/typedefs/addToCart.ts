@@ -58,4 +58,10 @@ export default `
     updateCarts(input:[productInfo]):placeOrderResponse
     updateAddToCart(input:updateAddToCartInput):AddToCart
   }
+
+  type Subscription {
+    updateCart: AddToCart
+  }
+
+ 
 `;

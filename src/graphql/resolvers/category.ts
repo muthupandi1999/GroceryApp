@@ -3,12 +3,15 @@ import createGraphQLError from "../../errors/graphql.error";
 import { verifyToken_api } from "../../validation/token.validation";
 import { photoUpload } from "../../helpers/cloudnary.photoUpload";
 import { cloudinary } from "../../config/cloudnary.config";
+import { PubSub } from "graphql-subscriptions";
 import {
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "../../types/category.type";
 import { isFeatured } from "../../types/enums";
 // import { cloudinary } from "../../config/cloudnary.config";
+
+const pubsub = new PubSub();
 
 
 export default {
@@ -104,6 +107,8 @@ export default {
               isActive: category?.isActive,
               products,
             }
+
+       
           
           return data;
         }
@@ -222,6 +227,8 @@ export default {
       throw createGraphQLError("Error something wrong on delete category", 500);
     },
   },
+
+
   // Subscription: {
   //   categoryProductType: {
   //     subscribe: () => pubsub.asyncIterator('CATEGORY_WITH_PRODUCTYPES'),

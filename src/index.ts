@@ -13,8 +13,8 @@ import { connectRedis } from "./config/redis";
 import { promoExpiery } from "./cron/promo.cron";
 
 //ws
-// import { WebSocketServer } from 'ws';
-// import { useServer } from 'graphql-ws/lib/use/ws';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const startServer = async () => {
@@ -25,14 +25,14 @@ const startServer = async () => {
   const httpServer = createServer(app);
 
   // Creating the WebSocket server
-  // const wsServer = new WebSocketServer({
-  //   server: httpServer,
-  //   path: '/graphql',
-  // });
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/graphql',
+  });
 
   // WebSocketServer start listening.
   const schema = makeExecutableSchema({ typeDefs, resolvers });
-  // const serverCleanup = useServer({ schema });
+  const serverCleanup = useServer({ schema }, wsServer);
 
   promoExpiery.start();
   // Set up ApolloServer.
@@ -47,7 +47,7 @@ const startServer = async () => {
         async serverWillStart() {
           return {
             async drainServer() {
-              // await serverCleanup.dispose();
+              await serverCleanup.dispose();
             },
           };
         },

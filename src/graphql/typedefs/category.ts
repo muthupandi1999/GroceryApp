@@ -57,4 +57,6 @@ export default `
   type Subscription {
     categoryProductType: ProductTypeWithProducts
   }
+
+  
 `;
