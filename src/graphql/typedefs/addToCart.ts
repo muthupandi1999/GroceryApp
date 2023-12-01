@@ -60,6 +60,7 @@ export default `
   }
 
   type Subscription {
+    addCart:AddToCart
     updateCart: AddToCart
   }
 

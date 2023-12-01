@@ -64,7 +64,7 @@ export default {
       });
 
       if (existAddToCart) {
-        return await prisma.addToCart.update({
+        let AddToCartproduct = await prisma.addToCart.update({
           where: { id: existAddToCart.id },
           data: {
             quantity: existAddToCart.quantity + quantity,
@@ -80,6 +80,10 @@ export default {
             user: true,
           },
         });
+        await pubsub.publish("ADD_CART", {
+          addCart: AddToCartproduct,
+        });
+        return AddToCartproduct
       } else {
         let productInfo = await prisma.products.findUnique({
           where: { id: productId },
@@ -108,7 +112,9 @@ export default {
           });
 
           console.log("4545", addProductOnCart);
-
+          await pubsub.publish("ADD_CART", {
+            addCart: addProductOnCart,
+          });
           return addProductOnCart;
         }
       }
@@ -210,6 +216,9 @@ export default {
   },
 
   Subscription: {
+    addCart: {
+      subscribe: async () => pubsub.asyncIterator("ADD_CART"),
+    },
     updateCart: {
       subscribe: async () => pubsub.asyncIterator("UPDATE_CART"),
     },
