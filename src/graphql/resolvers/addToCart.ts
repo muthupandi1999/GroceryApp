@@ -175,14 +175,6 @@ export default {
       });
 
       if (cartsExists) {
-        let checkQuantity = cartsExists.quantity + quantity;
-        if (!checkQuantity) {
-          await prisma.addToCart.delete({
-            where: { id: cartsExists.id },
-          });
-          return null;
-        }
-
         let data = await prisma.addToCart.update({
           where: { id: cartsExists.id },
           data: {
@@ -204,7 +196,12 @@ export default {
             user: true,
           },
         });
-
+        let checkQuantity = cartsExists.quantity + quantity;
+        if (!checkQuantity) {
+          await prisma.addToCart.delete({
+            where: { id: cartsExists.id },
+          });
+        }
         if (data) {
           await pubsub.publish("UPDATE_CART", {
             updateCart: data,
