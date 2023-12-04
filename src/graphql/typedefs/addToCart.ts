@@ -32,6 +32,7 @@ export default `
   type userAddToCarts {
     carts:[AddToCart]
     subTotal:Float!
+    count:Int!
   }
   
   input updateAddToCartInput{

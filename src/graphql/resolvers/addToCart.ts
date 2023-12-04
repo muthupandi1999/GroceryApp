@@ -14,6 +14,7 @@ export default {
       let carts = await prisma.addToCart.findMany({
         where: {
           userId,
+          isOrder: false
         },
         include: {
           product: {
@@ -42,6 +43,7 @@ export default {
           return {
             carts: carts,
             subTotal: totalPrice,
+            count: carts.length
           };
         }
       }
