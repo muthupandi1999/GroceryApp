@@ -13,7 +13,6 @@ import { isFeatured } from "../../types/enums";
 
 const pubsub = new PubSub();
 
-
 export default {
   Query: {
     getCategory: async (_: any, { id }: { id: string }, context: any) => {
@@ -38,7 +37,7 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "65642fcb264c4f37a0b129be" },
+                        where: { userId: "655379d96144626a275e8a14" },
                       },
                     },
                   },
@@ -83,7 +82,7 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "65642fcb264c4f37a0b129be" },
+                        where: { userId: "655379d96144626a275e8a14" },
                       },
                     },
                   },
@@ -99,17 +98,22 @@ export default {
         const products = category?.productTypes.flatMap(
           (productType) => productType.products
         );
-        if (products) {
-            let data = {
-              id: category?.id,
-              name: category?.name,
-              image: category?.image,
-              isActive: category?.isActive,
-              products,
-            }
 
-       
-          
+        if (products) {
+          let slicedProducts = products; // Default to all products
+
+          if (sliceCount !== undefined && sliceCount > 0) {
+            slicedProducts = products.slice(0, sliceCount); // Slice products based on sliceCount
+          }
+
+          let data = {
+            id: category?.id,
+            name: category?.name,
+            image: category?.image,
+            isActive: category?.isActive,
+            products: slicedProducts, // Assign the sliced products to the 'products' field
+          };
+
           return data;
         }
       } else {
@@ -131,7 +135,7 @@ export default {
                   variant: {
                     include: {
                       AddToCart: {
-                        where: { userId: "65642fcb264c4f37a0b129be" },
+                        where: { userId: "655379d96144626a275e8a14" },
                       },
                     },
                   },
@@ -228,11 +232,10 @@ export default {
     },
   },
 
-
   // Subscription: {
   //   categoryProductType: {
   //     subscribe: () => pubsub.asyncIterator('CATEGORY_WITH_PRODUCTYPES'),
   //   },
-    
+
   // },
 };
