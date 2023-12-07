@@ -6,7 +6,6 @@ import * as EmailValidator from "email-validator";
 import user from "../typedefs/user";
 import {
   JwtPayload,
-  LoginStatus,
   updateUserInput,
 } from "../../types/user.type";
 import { photoUpload } from "../../helpers/cloudnary.photoUpload";
@@ -467,6 +466,7 @@ export default {
             `you have a ${4 - limit} remaining attempt`,
             400
           );
+          
         } else {
           let deleteOtp = await prisma.otpValidationPhone.delete({
             where: { id: existData?.id },

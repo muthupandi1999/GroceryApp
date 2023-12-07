@@ -25,7 +25,7 @@ export default {
                 },
                 include: {
                   ProductInventory: true,
-                  AddToCart: { where: { userId: "65642fcb264c4f37a0b129be" } },
+                  AddToCart: { where: { userId: "655379d96144626a275e8a14" } },
                 },
               },
             },
@@ -54,7 +54,7 @@ export default {
                 },
                 include: {
                   ProductInventory: true,
-                  AddToCart: { where: { userId: "65642fcb264c4f37a0b129be" } },
+                  AddToCart: { where: { userId: "655379d96144626a275e8a14" } , include:{selectedVariant:true}},
                 },
               },
             },

@@ -21,12 +21,12 @@ export default {
               ProductType: {
                 include: {
                   products: {
-                    include: { variant: { include: { AddToCart: true } } },
+                    include: { variant: { include: { AddToCart: {include:{selectedVariant:true}} } } },
                   },
                 },
               },
               image: true,
-              variant: { include: { AddToCart: true } },
+              variant: { include: { AddToCart: {include:{selectedVariant:true}} } },
             },
           },
           user: true,
@@ -105,7 +105,7 @@ export default {
               ...(deviceToken ? { deviceToken: deviceToken } : {}),
             },
             include: {
-              product: { include: { ProductType: true, image: true } },
+              product: { include: { ProductType: true, image: true, variant:{include:{ProductInventory:true}} } },
               selectedVariant: true,
               user: true,
             },
@@ -196,7 +196,7 @@ export default {
               include: {
                 ProductType: true,
                 image: true,
-                variant: { include: { AddToCart: true } },
+                variant: { include: { AddToCart: {include:{selectedVariant:true}} } },
               },
             },
             selectedVariant: true,

@@ -62,11 +62,11 @@ export default {
               ProductInventory: true,
               AddToCart: {
                 where: {
-                  userId: "65642fcb264c4f37a0b129be",
+                  userId: "655379d96144626a275e8a14",
                 },
                 include: {
                   selectedVariant: true,
-                  product: { include: { variant: { include: { AddToCart: true } }, image: true } }
+                  product: { include: { variant: { include: { AddToCart: {include:{selectedVariant:true}} } }, image: true } }
                 }
               },
             },
@@ -318,11 +318,11 @@ export default {
                 ProductInventory: true,
                 AddToCart: {
                   where: {
-                    userId: "65642fcb264c4f37a0b129be",
+                    userId: "655379d96144626a275e8a14",
                   },
                   include: {
                     selectedVariant: true,
-                    product: { include: { variant: { include: { AddToCart: true } }, image: true } }
+                    product: { include: { variant: { include: { AddToCart: {include:{selectedVariant:true}} } }, image: true } }
                   }
                 },
               },

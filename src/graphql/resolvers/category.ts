@@ -38,6 +38,7 @@ export default {
                       ProductInventory: true,
                       AddToCart: {
                         where: { userId: "655379d96144626a275e8a14" },
+                        include: { selectedVariant: true },
                       },
                     },
                   },
@@ -83,9 +84,18 @@ export default {
                       ProductInventory: true,
                       AddToCart: {
                         where: { userId: "655379d96144626a275e8a14" },
+                        include: {
+                          selectedVariant: true,
+                          product: {
+                            include: {
+                              variant: { include: { ProductInventory: true } },
+                            },
+                          },
+                        },
                       },
                     },
                   },
+
                   // AddToCart: { include: { user: true, selectedVariant: true } },
                 },
               },
@@ -136,6 +146,7 @@ export default {
                     include: {
                       AddToCart: {
                         where: { userId: "655379d96144626a275e8a14" },
+                        include: { selectedVariant: true },
                       },
                     },
                   },
