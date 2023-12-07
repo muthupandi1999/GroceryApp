@@ -14,6 +14,7 @@ export default {
       let carts = await prisma.addToCart.findMany({
         where: {
           userId,
+          isOrder: false
         },
         include: {
           product: {
@@ -42,6 +43,7 @@ export default {
           return {
             carts: carts,
             subTotal: totalPrice,
+            count: carts.length
           };
         }
       }
@@ -175,14 +177,6 @@ export default {
       });
 
       if (cartsExists) {
-        let checkQuantity = cartsExists.quantity + quantity;
-        if (!checkQuantity) {
-          await prisma.addToCart.delete({
-            where: { id: cartsExists.id },
-          });
-          return null;
-        }
-
         let data = await prisma.addToCart.update({
           where: { id: cartsExists.id },
           data: {
@@ -204,7 +198,12 @@ export default {
             user: true,
           },
         });
-
+        let checkQuantity = cartsExists.quantity + quantity;
+        if (!checkQuantity) {
+          await prisma.addToCart.delete({
+            where: { id: cartsExists.id },
+          });
+        }
         if (data) {
           await pubsub.publish("UPDATE_CART", {
             updateCart: data,
