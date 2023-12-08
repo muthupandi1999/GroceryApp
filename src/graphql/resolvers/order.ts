@@ -189,7 +189,7 @@ export default {
         customer: customerId,
         amount: amount * 100,
         currency: "inr",
-        // capture_method: 'manual',
+        capture_method: 'manual',
         payment_method_data: {
           type: "card",
           card: {
