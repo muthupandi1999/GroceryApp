@@ -74,6 +74,51 @@ export default {
         if (!address?.id) {
           address.id = await createAddress(address, userId);
         }
+
+        let OrderExists = await prisma.order.findFirst({
+          where: {
+            userId,
+            orderStatus: "PENDING"
+          },
+        });
+
+        if (OrderExists) {
+          let updateOrder = await prisma.order.update({
+            where: {
+              id: OrderExists.id,
+              userId,
+              orderStatus: "PENDING"
+            },
+            data: {
+              orderTime: new Date(),
+              orderType: orderType,
+              address: address
+                ? {
+                  connect: { id: address.id },
+                }
+                : undefined,
+              addToCart: {
+                connect: addToCartId.map((id: string) => ({ id })),
+              },
+              coupon: couponId ? { connect: { id: couponId } } : undefined,
+              user: { connect: { id: userId } },
+              branch: { connect: { id: branchId } },
+              orderAmount: orderAmount,
+              paymentType: paymentType,
+            },
+            include: {
+              addToCart: true,
+              coupon: true,
+              user: true,
+              address: true,
+            },
+          });
+          return {
+            status: true,
+            paymentType,
+            message: "Order Successfully updated",
+          };
+        }
         let orderId = await generateOrderId();
         let pendingOrder = await prisma.order.count({
           where: {
@@ -109,8 +154,8 @@ export default {
           });
 
           if (placeOrder) {
-            updateAddToCart(addToCartId);
-            updateProductInventory(addToCartId, branchId);
+            // updateAddToCart(addToCartId);
+            // updateProductInventory(addToCartId, branchId);
             return {
               status: true,
               paymentType,
@@ -160,7 +205,9 @@ export default {
       // console.log("🚀 ~ file: server.js:57 ~ app.post ~ paymentIntent:", paymentIntent)
       const confirmedIntent = await stripe.paymentIntents.confirm(
         paymentIntent.id,
-        { payment_method: paymentIntent.payment_method }
+        {
+          return_url: `http://localhost:3000/sucess/${paymentIntent.id}`,
+        }
       );
       console.log(
         "🚀 ~ file: server.js:59 ~ app.post ~ confirmedIntent:",
