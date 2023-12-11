@@ -88,8 +88,8 @@ export default {
               orderType: orderType,
               address: address
                 ? {
-                  connect: { id: address.id },
-                }
+                    connect: { id: address.id },
+                  }
                 : undefined,
               addToCart: {
                 connect: addToCartId.map((id: string) => ({ id })),
@@ -135,42 +135,47 @@ export default {
       }
     },
     cardPayment: async (_: any, { input }: { input: any }) => {
-      const { name, email, userId, orderId, amount, stripeToken } = input;
+      const { name, email, amount } = input;
 
       let customerId = createStripeCustomer(name, email);
       console.log("🚀 ~ file: server.js:48 ~ app.post ~ customer:", customerId);
-
-      const paymentIntent = await stripe.paymentIntents.create({
-        customer: customerId,
-        amount: amount * 100,
-        currency: "inr",
-        // capture_method: 'manual',
-        payment_method_data: {
-          type: "card",
-          card: {
-            token: stripeToken,
+      if (customerId) {
+        const paymentIntent = await stripe.paymentIntents.create({
+          customer: customerId,
+          amount: amount * 100,
+          currency: "inr",
+          // capture_method: 'manual',
+          // payment_method_data: {
+          //   type: "card",
+          //   card: {
+          //     token: stripeToken,
+          //   },
+          // },
+          automatic_payment_methods: {
+            enabled: true,
+            // allow_redirects: "never",
           },
-        },
-        automatic_payment_methods: {
-          enabled: true,
-          allow_redirects: "never",
-        },
-        confirm: true,
-      });
-      // console.log("🚀 ~ file: server.js:57 ~ app.post ~ paymentIntent:", paymentIntent)
-      const confirmedIntent = await stripe.paymentIntents.confirm(
-        paymentIntent.id,
-        { payment_method: paymentIntent.payment_method }
-      );
-      console.log(
-        "🚀 ~ file: server.js:59 ~ app.post ~ confirmedIntent:",
-        confirmedIntent
-      );
-      return {
-        status: true,
-        message: "Please authenticated to capture the amount",
-        url: confirmedIntent?.next_action?.use_stripe_sdk?.stripe_js,
-      };
+          // confirm: true,
+        });
+        // console.log("🚀 ~ file: server.js:57 ~ app.post ~ paymentIntent:", paymentIntent)
+        // const confirmedIntent = await stripe.paymentIntents.confirm(
+        //   paymentIntent.id,
+        //   { payment_method: paymentIntent.payment_method }
+        // );
+        // console.log(
+        //   "🚀 ~ file: server.js:59 ~ app.post ~ confirmedIntent:",
+        //   confirmedIntent
+        // );
+        // return {
+        //   status: true,
+        //   message: "Please authenticated to capture the amount",
+        //   url: confirmedIntent?.next_action?.use_stripe_sdk?.stripe_js,
+        // };
+
+        return {
+          clientSecret: paymentIntent?.client_secret,
+        };
+      }
     },
   },
 };

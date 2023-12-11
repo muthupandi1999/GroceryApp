@@ -35,11 +35,13 @@ export default {
       });
 
       let sortedProducts: any = sortBy(filter, productType?.products);
-      const productTypeWithSorted = {
-        ...productType,
-        products: sortedProducts,
-      };
-      return productTypeWithSorted;
+      if (sortedProducts) {
+        const productTypeWithSorted = {
+          ...productType,
+          products: sortedProducts,
+        };
+        return productTypeWithSorted;
+      }
     },
     getProductTypes: async (_: any, __: any, context: any) => {
       return await prisma.productTypes.findMany({
@@ -54,7 +56,10 @@ export default {
                 },
                 include: {
                   ProductInventory: true,
-                  AddToCart: { where: { userId: "655379d96144626a275e8a14" } , include:{selectedVariant:true}},
+                  AddToCart: {
+                    where: { userId: "655379d96144626a275e8a14" },
+                    include: { selectedVariant: true },
+                  },
                 },
               },
             },

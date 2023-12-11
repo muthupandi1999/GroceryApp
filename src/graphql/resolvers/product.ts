@@ -15,8 +15,6 @@ import {
   ImageData,
 } from "../../types/product.type";
 
-
-
 export default {
   Query: {
     getProduct: async (_: any, { id }: { id: string }, context: any) => {
@@ -24,7 +22,29 @@ export default {
         where: { id },
         include: {
           ProductType: true,
-          variant: { include: { ProductInventory: true } },
+          variant: {
+            include: {
+              ProductInventory: true,
+              AddToCart: {
+                where: {
+                  userId: "655379d96144626a275e8a14",
+                },
+                include: {
+                  selectedVariant: true,
+                  product: {
+                    include: {
+                      variant: {
+                        include: {
+                          AddToCart: { include: { selectedVariant: true } },
+                        },
+                      },
+                      image: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
           image: true,
         },
       });
@@ -66,8 +86,17 @@ export default {
                 },
                 include: {
                   selectedVariant: true,
-                  product: { include: { variant: { include: { AddToCart: {include:{selectedVariant:true}} } }, image: true } }
-                }
+                  product: {
+                    include: {
+                      variant: {
+                        include: {
+                          AddToCart: { include: { selectedVariant: true } },
+                        },
+                      },
+                      image: true,
+                    },
+                  },
+                },
               },
             },
           },
@@ -322,15 +351,24 @@ export default {
                   },
                   include: {
                     selectedVariant: true,
-                    product: { include: { variant: { include: { AddToCart: {include:{selectedVariant:true}} } }, image: true } }
-                  }
+                    product: {
+                      include: {
+                        variant: {
+                          include: {
+                            AddToCart: { include: { selectedVariant: true } },
+                          },
+                        },
+                        image: true,
+                      },
+                    },
+                  },
                 },
               },
             },
             image: true,
             ProductInventory: true,
             // AddToCart: { include: { user: true, selectedVariant: true } },
-          }
+          },
         });
         // subscriptionsProduct()
         return updatedProduct;
@@ -391,7 +429,6 @@ export default {
       }
     },
   },
-
 };
 
 // const subscriptionsProduct = async () => {
@@ -420,5 +457,5 @@ export default {
 //     },
 //   });
 //   console.dir(allproducts[0], { depth: null });
- 
+
 // }

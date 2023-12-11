@@ -66,16 +66,19 @@ type placeOrderResponse {
 input cardPaymentInput {
     name:String
     email:String
-    userId: String!
-    orderId:String
     amount:Float
-    stripeToken:String
+    currency:String
+
 }
 
 type cardPaymentResponse {
     status :Boolean
     message:String
     url:String
+}
+
+type cardPaymentResponse1 {
+    clientSecret:String
 }
 
 type getEstimateDeliveryTimeResponse{
@@ -91,6 +94,6 @@ type Query{
 
 type Mutation {
     placeOrder(input: placeOrderInput!):placeOrderResponse
-    cardPayment(input:cardPaymentInput):cardPaymentResponse
+    cardPayment(input:cardPaymentInput):cardPaymentResponse1
 }
 `;

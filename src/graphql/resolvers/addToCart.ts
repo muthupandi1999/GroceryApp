@@ -5,7 +5,6 @@ import user from "./user";
 import { PubSub } from "graphql-subscriptions";
 import { sortBy } from "../../utils/common";
 
-
 const pubsub = new PubSub();
 
 export default {
@@ -14,7 +13,7 @@ export default {
       let carts = await prisma.addToCart.findMany({
         where: {
           userId,
-          isOrder: false
+          isOrder: false,
         },
         include: {
           product: {
@@ -22,12 +21,20 @@ export default {
               ProductType: {
                 include: {
                   products: {
-                    include: { variant: { include: { AddToCart: {include:{selectedVariant:true}} } } },
+                    include: {
+                      variant: {
+                        include: {
+                          AddToCart: { include: { selectedVariant: true } },
+                        },
+                      },
+                    },
                   },
                 },
               },
               image: true,
-              variant: { include: { AddToCart: {include:{selectedVariant:true}} } },
+              variant: {
+                include: { AddToCart: { include: { selectedVariant: true } } },
+              },
             },
           },
           user: true,
@@ -43,7 +50,7 @@ export default {
           return {
             carts: carts,
             subTotal: totalPrice,
-            count: carts.length
+            count: carts.length,
           };
         }
       }
@@ -85,7 +92,7 @@ export default {
         await pubsub.publish("ADD_CART", {
           addCart: AddToCartproduct,
         });
-        return AddToCartproduct
+        return AddToCartproduct;
       } else {
         let productInfo = await prisma.products.findUnique({
           where: { id: productId },
@@ -107,9 +114,17 @@ export default {
               ...(deviceToken ? { deviceToken: deviceToken } : {}),
             },
             include: {
-              product: { include: { ProductType: true, image: true, variant:{include:{ProductInventory:true}} } },
+              product: {
+                include: {
+                  ProductType: true,
+                  image: true,
+                  variant: { include: { ProductInventory: true } },
+                },
+              },
               selectedVariant: true,
-              user: true,
+              user: {
+                include: { Address: true },
+              },
             },
           });
 
@@ -190,12 +205,18 @@ export default {
               include: {
                 ProductType: true,
                 image: true,
-                variant: { include: { AddToCart: {include:{selectedVariant:true}} } },
+                variant: {
+                  include: {
+                    AddToCart: { include: { selectedVariant: true } },
+                  },
+                },
               },
             },
             selectedVariant: true,
 
-            user: true,
+            user: {
+              include: { Address: true },
+            },
           },
         });
         let checkQuantity = cartsExists.quantity + quantity;
