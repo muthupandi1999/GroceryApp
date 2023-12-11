@@ -74,6 +74,51 @@ export default {
         if (!address?.id) {
           address.id = await createAddress(address, userId);
         }
+
+        let OrderExists = await prisma.order.findFirst({
+          where: {
+            userId,
+            orderStatus: "PENDING"
+          },
+        });
+
+        if (OrderExists) {
+          let updateOrder = await prisma.order.update({
+            where: {
+              id: OrderExists.id,
+              userId,
+              orderStatus: "PENDING"
+            },
+            data: {
+              orderTime: new Date(),
+              orderType: orderType,
+              address: address
+                ? {
+                  connect: { id: address.id },
+                }
+                : undefined,
+              addToCart: {
+                connect: addToCartId.map((id: string) => ({ id })),
+              },
+              coupon: couponId ? { connect: { id: couponId } } : undefined,
+              user: { connect: { id: userId } },
+              branch: { connect: { id: branchId } },
+              orderAmount: orderAmount,
+              paymentType: paymentType,
+            },
+            include: {
+              addToCart: true,
+              coupon: true,
+              user: true,
+              address: true,
+            },
+          });
+          return {
+            status: true,
+            paymentType,
+            message: "Order Successfully updated",
+          };
+        }
         let orderId = await generateOrderId();
         let pendingOrder = await prisma.order.count({
           where: {
@@ -109,8 +154,8 @@ export default {
           });
 
           if (placeOrder) {
-            updateAddToCart(addToCartId);
-            updateProductInventory(addToCartId, branchId);
+            // updateAddToCart(addToCartId);
+            // updateProductInventory(addToCartId, branchId);
             return {
               status: true,
               paymentType,
@@ -139,6 +184,7 @@ export default {
 
       let customerId = createStripeCustomer(name, email);
       console.log("🚀 ~ file: server.js:48 ~ app.post ~ customer:", customerId);
+<<<<<<< HEAD
       if (customerId) {
         const paymentIntent = await stripe.paymentIntents.create({
           customer: customerId,
@@ -176,6 +222,42 @@ export default {
           clientSecret: paymentIntent?.client_secret,
         };
       }
+=======
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        customer: customerId,
+        amount: amount * 100,
+        currency: "inr",
+        capture_method: 'manual',
+        payment_method_data: {
+          type: "card",
+          card: {
+            token: stripeToken,
+          },
+        },
+        automatic_payment_methods: {
+          enabled: true,
+          allow_redirects: "never",
+        },
+        confirm: true,
+      });
+      // console.log("🚀 ~ file: server.js:57 ~ app.post ~ paymentIntent:", paymentIntent)
+      const confirmedIntent = await stripe.paymentIntents.confirm(
+        paymentIntent.id,
+        {
+          return_url: `http://localhost:3000/sucess/${paymentIntent.id}`,
+        }
+      );
+      console.log(
+        "🚀 ~ file: server.js:59 ~ app.post ~ confirmedIntent:",
+        confirmedIntent
+      );
+      return {
+        status: true,
+        message: "Please authenticated to capture the amount",
+        url: confirmedIntent?.next_action?.use_stripe_sdk?.stripe_js,
+      };
+>>>>>>> 76be7610fbc42d845eff3619a001d6d57b1c4616
     },
   },
 };
