@@ -83,6 +83,7 @@ export default {
               AddToCart: {
                 where: {
                   userId: "655379d96144626a275e8a14",
+                  isOrder: false,
                 },
                 include: {
                   selectedVariant: true,

@@ -547,8 +547,8 @@ export const sortBy = (filters: string, products: any) => {
   products = products.map((item: any) => {
     if (item.dicountPercentage) {
       item.variant[0].dicountPrice = Math.round(
-        item?.variant?.[0].price -
-          item?.variant?.[0].price * (item?.dicountPercentage / 100)
+        (item?.variant?.[0].price -
+          (item?.variant?.[0].price * (item?.dicountPercentage / 100)))
       );
     } else {
       item.variant[0].dicountPrice = item.variant[0].price;
@@ -563,13 +563,13 @@ export const sortBy = (filters: string, products: any) => {
     case "PriceHighToLow":
       return (sortedProducts = products?.sort(
         (a: any, b: any) =>
-          b.variant[0]?.dicountPrice - a.variant[0]?.dicountPrice
+          b.variant[0]?.price - a.variant[0]?.price
       ));
 
     case "PriceLowToHigh":
       return (sortedProducts = products?.sort(
         (a: any, b: any) =>
-          a.variant[0]?.dicountPrice - b.variant[0]?.dicountPrice
+          a.variant[0]?.price - b.variant[0]?.price
       ));
 
     case "AToZ":

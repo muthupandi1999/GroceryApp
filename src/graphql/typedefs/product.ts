@@ -28,7 +28,7 @@ export default `
     price: Float!
     stock: Int
     ProductInventory:[ProductInventory]
-    AddToCart:AddToCart
+    AddToCart:[AddToCart]
     product:Products
   }
 

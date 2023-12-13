@@ -65,6 +65,7 @@ export default {
           userId: userId,
           productId: productId,
           selectedVariantId: selectedVariantId,
+          isOrder:false
         },
         include: {
           selectedVariant: true,

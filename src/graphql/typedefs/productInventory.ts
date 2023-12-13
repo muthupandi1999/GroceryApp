@@ -4,15 +4,15 @@ export default `
     productId:String!
     branchId:String!
     variantId:String!
-    availableStock:Int!
-    minimumAvailableStock:Int
+    availableStock:Float!
+    minimumAvailableStock:Float
   }
   input addProductInventoryInput{
     productId:String!
     branchId:String!
     variantId:String!
-    availableStock:Int!
-    minimumAvailableStock:Int
+    availableStock:Float!
+    minimumAvailableStock:Float
   }
 
   type addProductInventoryResponse{

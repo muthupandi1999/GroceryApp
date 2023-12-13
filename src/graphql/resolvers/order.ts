@@ -143,18 +143,16 @@ export default {
           customer: customerId,
           amount: amount * 100,
           currency: "inr",
-          // capture_method: 'manual',
+          
           // payment_method_data: {
           //   type: "card",
-          //   card: {
-          //     token: stripeToken,
-          //   },
+
           // },
-          automatic_payment_methods: {
-            enabled: true,
-            // allow_redirects: "never",
-          },
-          // confirm: true,
+          // automatic_payment_methods: {
+          //   enabled: true,
+          //   allow_redirects: "never",
+          // },
+          // confirm: true,  
         });
         // console.log("🚀 ~ file: server.js:57 ~ app.post ~ paymentIntent:", paymentIntent)
         // const confirmedIntent = await stripe.paymentIntents.confirm(
