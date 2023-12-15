@@ -43,7 +43,7 @@ export default `
   }
 
   type Query {
-    getAddToCartsByUserId(userId: ID!): userAddToCarts
+    getAddToCartsByUserId(index:Int,limit:Int,userId: ID!): userAddToCarts
   }
  
   input productInfo {
