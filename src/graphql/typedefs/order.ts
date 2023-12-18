@@ -17,11 +17,22 @@ enum paymentStatusType {
     Pending
 }
 
+enum OrderStatus {
+    PENDING
+    CONFIRMED
+    OUTFORDELIVERY
+    DELIVERED
+    CANCELLED
+    RETURNED
+    REJECTED
+  }
+
 type Order {
     id: String
     orderId: String
     orderTime: DateTime
     orderType: OrderType
+    orderStatus:OrderStatus
     address: Address
     deliveryAddressId: String
     addToCart: [AddToCart]
@@ -88,6 +99,7 @@ type getEstimateDeliveryTimeResponse{
 }
 
 type Query{
+    getOrder(orderId:String!):Order!
     getUserOrder(userId:String):[Order]
     getEstimateDeliveryTime(from:String!,to:String!):getEstimateDeliveryTimeResponse
 }

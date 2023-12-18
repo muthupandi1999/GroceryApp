@@ -15,6 +15,22 @@ import { Address } from "../../types/address.type";
 
 export default {
   Query: {
+    getOrder: async (_: any, { orderId }: { orderId: string }) => {
+      let order = await prisma.order.findUnique({
+        where: {
+          id: orderId,
+        },
+        include: {
+          addToCart: {include:{product:true, selectedVariant:true}},
+          coupon: true,
+          user: true,
+          address: true,
+          branch: true,
+        },
+      });
+
+      return order;
+    },
     getUserOrder: async (_: any, { userId }: any, context: any) => {
       let userOrders = await prisma.order.findMany({
         where: {
@@ -28,6 +44,7 @@ export default {
           branch: true,
         },
       });
+
       return userOrders;
     },
     getEstimateDeliveryTime: async (
@@ -110,7 +127,7 @@ export default {
 
           if (placeOrder) {
             updateAddToCart(addToCartId);
-            updateProductInventory(addToCartId, branchId);
+            // updateProductInventory(addToCartId, branchId);
             return {
               status: true,
               paymentType,
@@ -143,7 +160,7 @@ export default {
           customer: customerId,
           amount: amount * 100,
           currency: "inr",
-          
+
           // payment_method_data: {
           //   type: "card",
 
@@ -152,7 +169,7 @@ export default {
           //   enabled: true,
           //   allow_redirects: "never",
           // },
-          // confirm: true,  
+          // confirm: true,
         });
         // console.log("🚀 ~ file: server.js:57 ~ app.post ~ paymentIntent:", paymentIntent)
         // const confirmedIntent = await stripe.paymentIntents.confirm(

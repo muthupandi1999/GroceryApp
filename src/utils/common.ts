@@ -563,13 +563,13 @@ export const sortBy = (filters: string, products: any) => {
     case "PriceHighToLow":
       return (sortedProducts = products?.sort(
         (a: any, b: any) =>
-          b.variant[0]?.price - a.variant[0]?.price
+          b.variant[0]?.dicountPrice - a.variant[0]?.dicountPrice
       ));
 
     case "PriceLowToHigh":
       return (sortedProducts = products?.sort(
         (a: any, b: any) =>
-          a.variant[0]?.price - b.variant[0]?.price
+          a.variant[0]?.dicountPrice - b.variant[0]?.dicountPrice
       ));
 
     case "AToZ":
