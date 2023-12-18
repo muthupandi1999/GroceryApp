@@ -6,11 +6,20 @@ import { PubSub } from "graphql-subscriptions";
 import { sortBy } from "../../utils/common";
 
 const pubsub = new PubSub();
-
+interface MatchQuery {
+  take?: number;
+  skip?: number;
+  where: {
+    userId: string;
+    isOrder: boolean;
+  };
+  include: any;
+}
 export default {
   Query: {
-    getAddToCartsByUserId: async (_: any, { userId }: any, context: any) => {
-      let carts = await prisma.addToCart.findMany({
+    getAddToCartsByUserId: async (_: any, { index, limit, userId }: { index: number, limit: number, userId: string }, context: any) => {
+
+      let matchQuery: MatchQuery = {
         where: {
           userId,
           isOrder: false,
@@ -40,17 +49,29 @@ export default {
           user: true,
           selectedVariant: { include: { AddToCart: true } },
         },
+      };
+      if (index != null && limit != null) {
+        let take = limit;
+        let skip = (index - 1) * limit;
+        matchQuery['take'] = take;
+        matchQuery['skip'] = skip;
+      }
+      let carts = await prisma.addToCart.findMany(matchQuery);
+      let totalCarts = await prisma.addToCart.findMany({
+        where: {
+          userId,
+          isOrder: false,
+        }
       });
-
-      if (carts) {
-        let totalPrice = carts.reduce((acc: number, cartItem: any) => {
+      if (totalCarts) {
+        let totalPrice = totalCarts.reduce((acc: number, cartItem: any) => {
           return acc + cartItem.totalPrice;
         }, 0);
         if (totalPrice) {
           return {
             carts: carts,
             subTotal: totalPrice,
-            count: carts.length,
+            count: totalCarts.length,
           };
         }
       }
@@ -65,7 +86,7 @@ export default {
           userId: userId,
           productId: productId,
           selectedVariantId: selectedVariantId,
-          isOrder:false
+          isOrder: false
         },
         include: {
           selectedVariant: true,
