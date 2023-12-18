@@ -46,6 +46,8 @@ type Order {
     paymentStatus: paymentStatusType
     paymentType: paymentMethod
     orderAmount: Float
+    orderDiscountPrice:Float
+    totalOrderPrice:Float
 }
 
 input deliveryAddress {

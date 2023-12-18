@@ -21,15 +21,39 @@ export default {
           id: orderId,
         },
         include: {
-          addToCart: {include:{product:true, selectedVariant:true}},
+          addToCart: { include: { product: true, selectedVariant: true } },
           coupon: true,
           user: true,
           address: true,
           branch: true,
         },
       });
+      let totalDiscount = 0, orderPrice = 0;
+      if (order) {
+        let cartData = order.addToCart;
+        for (let i = 0; i < cartData.length; i++) {
+          if (
+            cartData[i] &&
+            cartData[i].selectedVariant
+          ) {
+            //total dicount price calculation
+            let discountAmount =
+              cartData[i].quantity *
+              (cartData[i].selectedVariant?.price ?? 0) *
+              ((cartData[i].product?.dicountPercentage ?? 0) / 100);
+            totalDiscount += discountAmount
 
-      return order;
+            //total order price calculation
+            let orderAmount =
+              cartData[i].quantity *
+              (cartData[i].selectedVariant?.price ?? 0) 
+            orderPrice += orderAmount
+
+          }
+        }
+      }
+      let result = { orderDiscountPrice: totalDiscount, totalOrderPrice: orderPrice, ...order }
+      return result;
     },
     getUserOrder: async (_: any, { userId }: any, context: any) => {
       let userOrders = await prisma.order.findMany({
@@ -105,8 +129,8 @@ export default {
               orderType: orderType,
               address: address
                 ? {
-                    connect: { id: address.id },
-                  }
+                  connect: { id: address.id },
+                }
                 : undefined,
               addToCart: {
                 connect: addToCartId.map((id: string) => ({ id })),
@@ -143,7 +167,6 @@ export default {
           };
         }
       } catch (e) {
-        console.log("🚀 ~ file: order.ts:84 ~ placeOrder: ~ e:", e);
         return {
           status: false,
           paymentType: "ERROR",
@@ -171,14 +194,9 @@ export default {
           // },
           // confirm: true,
         });
-        // console.log("🚀 ~ file: server.js:57 ~ app.post ~ paymentIntent:", paymentIntent)
         // const confirmedIntent = await stripe.paymentIntents.confirm(
         //   paymentIntent.id,
         //   { payment_method: paymentIntent.payment_method }
-        // );
-        // console.log(
-        //   "🚀 ~ file: server.js:59 ~ app.post ~ confirmedIntent:",
-        //   confirmedIntent
         // );
         // return {
         //   status: true,
