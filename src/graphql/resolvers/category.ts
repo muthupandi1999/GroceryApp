@@ -83,7 +83,10 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "655379d96144626a275e8a14" },
+                        where: { 
+                          userId: "655379d96144626a275e8a14",
+                          isOrder : false
+                         },
                         include: {
                           selectedVariant: true,
                           product: {
