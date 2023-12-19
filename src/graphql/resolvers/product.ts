@@ -27,7 +27,7 @@ export default {
               ProductInventory: true,
               AddToCart: {
                 where: {
-                  userId: "655379d96144626a275e8a14",
+                  userId: "65642fcb264c4f37a0b129be",
                 },
                 include: {
                   selectedVariant: true,
@@ -82,7 +82,7 @@ export default {
               ProductInventory: true,
               AddToCart: {
                 where: {
-                  userId: "655379d96144626a275e8a14",
+                  userId: "65642fcb264c4f37a0b129be",
                   isOrder: false,
                 },
                 include: {
@@ -348,7 +348,7 @@ export default {
                 ProductInventory: true,
                 AddToCart: {
                   where: {
-                    userId: "655379d96144626a275e8a14",
+                    userId: "65642fcb264c4f37a0b129be",
                   },
                   include: {
                     selectedVariant: true,
