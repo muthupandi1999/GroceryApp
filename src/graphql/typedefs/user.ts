@@ -58,6 +58,10 @@ export default `
     profileImage: String
     addressInput:AddressInput
   }
+  type deleteAddress{
+    message:String
+    data:Address
+  }
 
   type Mutation {
 
@@ -71,12 +75,13 @@ export default `
     phoneNoVerifyUpdate(userId:ID!,otp:String!, phoneNo:String!):userStatus
     accessTokenGenerate(refreshToken: String!): String!
     
-
+    deleteUserAddress(id:ID!):deleteAddress!
     
   }
 
   type Query {
     getUserById(userId:ID!):User
     getUsers:[User]
+    
   }
 `;
