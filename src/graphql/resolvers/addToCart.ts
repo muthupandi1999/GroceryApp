@@ -252,14 +252,15 @@ export default {
             },
           },
         });
-        console.log("check", cartsExists.quantity)
+        console.log("quauntitu123", quantity);
+        // console.log("check", cartsExists?.quantity)
         // let checkQuantity = cartsExists.quantity + quantity;
-        // //console.log("checkQuantity", cartsExists.quantity)
-        // if (cartsExists.quantity === 1) {
-        //   await prisma.addToCart.delete({
-        //     where: { id: cartsExists.id },
-        //   });
-        // }
+        // console.log("checkQuantity", checkQuantity)
+        if (quantity <= 0) {
+          await prisma.addToCart.delete({
+            where: { id: cartsExists.id },
+          });
+        }
         if (data) {
           await pubsub.publish("UPDATE_CART", {
             updateCart: data,
