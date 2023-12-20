@@ -4,7 +4,7 @@ import GraphQLErrorHandling from "./graphql.error";
 const handlePrismaError = (e: any, code:number): void => {
   if (e instanceof Prisma.PrismaClientKnownRequestError) {
     if (e.code === "P2002") {
-      console.log(
+      //console.log(
         "There is a unique constraint violation, a new user cannot be created with this email"
       );
     }

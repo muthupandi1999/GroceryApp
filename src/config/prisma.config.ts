@@ -7,9 +7,9 @@ async function main() {
 
 main()
   .then(() => {
-    console.log("DB Connected successfully");
+    //console.log("DB Connected successfully");
   })
   .catch((err) => {
-    console.log("🚀  file: prisma.client.ts:15  err:", err);
+    //console.log("🚀  file: prisma.client.ts:15  err:", err);
   })
   .finally(() => prisma.$disconnect());

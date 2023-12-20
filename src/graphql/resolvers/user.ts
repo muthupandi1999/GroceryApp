@@ -22,7 +22,7 @@ export default {
           Address: true
         }
       });
-      // console.dir(user, { depth: null })
+      // //console.dir(user, { depth: null })
       if (user) {
         return user;
       } else {
@@ -420,7 +420,7 @@ export default {
     },
 
     updatePhoneNo: async (_: any, { phoneNo }: { phoneNo: string }) => {
-      console.log("yesssssssss");
+      //console.log("yesssssssss");
       if (phoneNo.length === 10) {
         const { otp, secret } = await generateOTP();
 

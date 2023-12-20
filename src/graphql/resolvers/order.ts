@@ -21,7 +21,7 @@ export default {
           id: orderId,
         },
         include: {
-          addToCart: { include: { product: true, selectedVariant: true } },
+          addToCart: { include: { product: {include:{image:true}}, selectedVariant: true,  } },
           coupon: true,
           user: true,
           address: true,
@@ -85,9 +85,9 @@ export default {
         let url = `https://www.mapquestapi.com/directions/v2/route?key=${key}&from=${from}&to=${to}&outFormat=json&ambiguities=ignore&routeType=fastest&doReverseGeocode=false&enhancedNarrative=false&avoidTimedConditions=false`;
         // let url = `https://www.mapquestapi.com/directions/v2/route?key=${key}&from=${fromLat},${fromLng}&to=${toLat},${toLng}&outFormat=json&ambiguities=ignore&routeType=fastest&doReverseGeocode=false&enhancedNarrative=false&avoidTimedConditions=false`
         let response: any = await axios.get(url);
-        // .then((res: any) => console.log(res.data))
+        // .then((res: any) => //console.log(res.data))
         // .catch((err: any) => console.error(err));
-        console.dir(response?.data, { depth: null });
+        //console.dir(response?.data, { depth: null });
         return {
           From: from,
           To: to,

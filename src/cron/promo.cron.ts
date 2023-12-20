@@ -55,7 +55,7 @@ export const promoExpiery = cron.schedule("0 0 * * *", async () => {
     //   })
     // );
 
-    console.log(`Expired promo codes disabled: ${expiredPromoCodes.length}`);
+    //console.log(`Expired promo codes disabled: ${expiredPromoCodes.length}`);
   } catch (error) {
     console.error("Error occurred during promo code expiration check:", error);
   }
