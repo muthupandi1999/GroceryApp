@@ -466,7 +466,7 @@ export default {
             `you have a ${4 - limit} remaining attempt`,
             400
           );
-          
+
         } else {
           let deleteOtp = await prisma.otpValidationPhone.delete({
             where: { id: existData?.id },
@@ -517,5 +517,21 @@ export default {
 
       return accessToken;
     },
+
+    deleteUserAddress: async (
+      _: any,
+      { id }: { id: string }
+    ) => {
+      let deleteCart = await prisma.address.delete({
+        where: { id },
+      });
+      if (deleteCart) {
+        return {
+          message: "Address deleted Successfully",
+          data: deleteCart,
+        };
+      }
+    }
+
   },
 };

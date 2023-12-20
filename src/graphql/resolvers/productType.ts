@@ -76,7 +76,7 @@ export default {
       context: any
     ) => {
       //   let status = await verifyToken_api(context.token);
-      //   console.log(status, "_________status");
+      //   //console.log(status, "_________status");
       //   if (status && status?.res?.role.includes("admin")) {
       let imageUrl = await photoUpload(input.image);
       return await prisma.productTypes.create({
@@ -129,7 +129,7 @@ export default {
       throw createGraphQLError("Not authorized", 402);
     },
     deleteProductType: async (_: any, { id }: { id: string }, context: any) => {
-      //   console.log(id, "_____id222");
+      //   //console.log(id, "_____id222");
       let status = await verifyToken_api(context.token);
       if (status && status?.res?.role.includes("admin")) {
         let deleteCategory = await prisma.productCategory.delete({
