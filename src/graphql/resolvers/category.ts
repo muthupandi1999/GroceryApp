@@ -37,7 +37,10 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "65642fcb264c4f37a0b129be", isOrder:false },
+                        where: {
+                          userId: "65642fcb264c4f37a0b129be",
+                          isOrder: false,
+                        },
                         include: { selectedVariant: true },
                       },
                     },
@@ -52,10 +55,18 @@ export default {
       //console.dir(allCategories[0], { depth: null });
 
       const categoriesWithDefaultRoutes = allCategories.map((category: any) => {
+        
         const defaultProductType = category.productTypes[0]; // Grabbing the first product type for the default route
+
+        let productCount = category.productTypes.reduce(
+          (count: number, type: any) => count + type.products.length,
+          0
+        );
+
         return {
           ...category,
           defaultRoute: `/category/${category.name}/${category.id}/${defaultProductType?.id}`,
+          productsCount: productCount,
           productTypes: category.productTypes.map((productType: any) => ({
             ...productType,
             defaultRoute: `/category/${category.name}/${category.id}/${productType.id}`,
@@ -83,7 +94,10 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "65642fcb264c4f37a0b129be", isOrder:false },
+                        where: {
+                          userId: "65642fcb264c4f37a0b129be",
+                          isOrder: false,
+                        },
                         include: {
                           selectedVariant: true,
                           product: {

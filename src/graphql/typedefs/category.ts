@@ -7,6 +7,7 @@ export default `
     isActive: Boolean
     productTypes:[ProductType]
     defaultRoute:String
+    productsCount:Int
   }
 
   type ProductTypeWithProducts {

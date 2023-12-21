@@ -21,7 +21,7 @@ export default {
       let product = await prisma.products.findUnique({
         where: { id },
         include: {
-          ProductType: true,
+          ProductType: {include:{productCategory:true}},
           variant: {
             include: {
               ProductInventory: true,
