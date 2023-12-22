@@ -74,7 +74,7 @@ const startServer = async () => {
 
   // Now that our HTTP server is fully set up, actually listen.
   httpServer.listen(PORT, () => {
-    //console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/graphql`);
+    console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/graphql`);
   });
 };
 startServer();
