@@ -46,10 +46,10 @@ export const verifyOtpWithSecret = (secret: string, otp: string) => {
   });
 
   if (isValid) {
-    console.log("The OTP is valid.");
+    //console.log("The OTP is valid.");
     return true;
   } else {
-    console.log("The OTP is invalid.");
+    //console.log("The OTP is invalid.");
     return false;
   }
 };

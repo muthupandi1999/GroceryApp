@@ -12,17 +12,28 @@ interface MatchQuery {
   where: {
     userId: string;
     isOrder: boolean;
+    quantity: any;
   };
   include: any;
 }
 export default {
   Query: {
-    getAddToCartsByUserId: async (_: any, { index, limit, userId }: { index: number, limit: number, userId: string }, context: any) => {
-
+    getAddToCartsByUserId: async (
+      _: any,
+      {
+        index,
+        limit,
+        userId,
+      }: { index: number; limit: number; userId: string },
+      context: any
+    ) => {
       let matchQuery: MatchQuery = {
         where: {
           userId,
           isOrder: false,
+          quantity: {
+            gt: 0,
+          },
         },
         include: {
           product: {
@@ -53,15 +64,15 @@ export default {
       if (index != null && limit != null) {
         let take = limit;
         let skip = (index - 1) * limit;
-        matchQuery['take'] = take;
-        matchQuery['skip'] = skip;
+        matchQuery["take"] = take;
+        matchQuery["skip"] = skip;
       }
       let carts = await prisma.addToCart.findMany(matchQuery);
       let totalCarts = await prisma.addToCart.findMany({
         where: {
           userId,
           isOrder: false,
-        }
+        },
       });
       if (totalCarts) {
         let totalPrice = totalCarts.reduce((acc: number, cartItem: any) => {
@@ -81,39 +92,83 @@ export default {
     addToCartProduct: async (_: any, { input }: any, context: any) => {
       const { productId, quantity, userId, deviceToken, selectedVariantId } =
         input;
-      let existAddToCart = await prisma.addToCart.findFirst({
-        where: {
-          userId: userId,
-          productId: productId,
-          selectedVariantId: selectedVariantId,
-          isOrder: false
-        },
-        include: {
-          selectedVariant: true,
-          product: { include: { image: true } },
-        },
+      // let existAddToCart = await prisma.addToCart.findFirst({
+      //   where: {
+      //     userId: userId,
+      //     productId: productId,
+      //     selectedVariantId: selectedVariantId,
+      //     isOrder: false,
+      //   },
+      //   include: {
+      //     selectedVariant: true,
+      //     product: { include: { image: true } },
+      //   },
+      // });
+
+      // if (existAddToCart) {
+      //   let AddToCartproduct = await prisma.addToCart.update({
+      //     where: { id: existAddToCart.id },
+      //     data: {
+      //       quantity: existAddToCart.quantity + quantity,
+      //       totalPrice:
+      //         existAddToCart.totalPrice! +
+      //         existAddToCart.selectedVariant!.price * quantity,
+      //     },
+      //     include: {
+      //       product: {
+      //         include: { ProductType: true, image: true, variant: true },
+      //       },
+      //       selectedVariant: true,
+      //       user: true,
+      //     },
+      //   });
+      //   await pubsub.publish("ADD_CART", {
+      //     addCart: AddToCartproduct,
+      //   });
+      //   return AddToCartproduct;
+      // } else {
+
+      // }
+
+      let productInfo = await prisma.products.findUnique({
+        where: { id: productId },
+        select: { variant: true },
       });
 
-      if (existAddToCart) {
-        let AddToCartproduct = await prisma.addToCart.update({
-          where: { id: existAddToCart.id },
+      const selectedVariant = productInfo?.variant.find(
+        (e: any) => e.id === selectedVariantId
+      );
+
+      if (productInfo && selectedVariant) {
+        let addProductOnCart = await prisma.addToCart.create({
           data: {
-            quantity: existAddToCart.quantity + quantity,
-            totalPrice:
-              existAddToCart.totalPrice! +
-              existAddToCart.selectedVariant!.price * quantity,
+            product: { connect: { id: productId } },
+            quantity: quantity,
+            totalPrice: selectedVariant.price * quantity,
+            selectedVariant: { connect: { id: selectedVariant.id } },
+            ...(userId ? { user: { connect: { id: userId } } } : {}),
+            ...(deviceToken ? { deviceToken: deviceToken } : {}),
           },
           include: {
             product: {
-              include: { ProductType: true, image: true, variant: true },
+              include: {
+                ProductType: true,
+                image: true,
+                variant: { include: { ProductInventory: true } },
+              },
             },
             selectedVariant: true,
-            user: true,
+            user: {
+              include: { Address: true },
+            },
           },
         });
+
+        //console.log("4545", addProductOnCart);
         await pubsub.publish("ADD_CART", {
-          addCart: AddToCartproduct,
+          addCart: addProductOnCart,
         });
+<<<<<<< HEAD
         return AddToCartproduct;
       } else {
         let productInfo = await prisma.products.findUnique({
@@ -156,6 +211,9 @@ export default {
           });
           return addProductOnCart;
         }
+=======
+        return addProductOnCart;
+>>>>>>> d81c5f21fcf6ff9ce39790b63dfe695e42230951
       }
 
       // throw createGraphQLError("product not found", 404);
@@ -239,11 +297,22 @@ export default {
             },
           },
         });
+<<<<<<< HEAD
         if (quantity <= 0) {
           await prisma.addToCart.delete({
             where: { id: cartsExists.id },
           });
         }
+=======
+        console.log("check", cartsExists.quantity)
+        // let checkQuantity = cartsExists.quantity + quantity;
+        // //console.log("checkQuantity", cartsExists.quantity)
+        // if (cartsExists.quantity === 1) {
+        //   await prisma.addToCart.delete({
+        //     where: { id: cartsExists.id },
+        //   });
+        // }
+>>>>>>> d81c5f21fcf6ff9ce39790b63dfe695e42230951
         if (data) {
           await pubsub.publish("UPDATE_CART", {
             updateCart: data,
@@ -290,6 +359,62 @@ export default {
         }
       }
     },
+    // updateCartTotal:async (_: any, { input }: { input: any }) => {
+    //   const { userId, productId, variantId, quantity } = input;
+    //   let cartsExists = await prisma.addToCart.findFirst({
+    //     where: {
+    //       isOrder: false,
+    //       userId,
+    //       productId,
+    //       selectedVariantId: variantId,
+    //     },
+    //     include: {
+    //       selectedVariant: true,
+    //     },
+    //   });
+
+    //   if (cartsExists) {
+    //     let data = await prisma.addToCart.update({
+    //       where: { id: cartsExists.id },
+    //       data: {
+    //         quantity: cartsExists.quantity + quantity,
+    //         totalPrice:
+    //           cartsExists.totalPrice! +
+    //           cartsExists.selectedVariant!.price * quantity,
+    //       },
+    //       include: {
+    //         product: {
+    //           include: {
+    //             ProductType: true,
+    //             image: true,
+    //             variant: {
+    //               include: {
+    //                 AddToCart: { include: { selectedVariant: true } },
+    //               },
+    //             },
+    //           },
+    //         },
+    //         selectedVariant: true,
+
+    //         user: {
+    //           include: { Address: true },
+    //         },
+    //       },
+    //     });
+    //     let checkQuantity = cartsExists.quantity + quantity;
+    //     if (!checkQuantity) {
+    //       await prisma.addToCart.delete({
+    //         where: { id: cartsExists.id },
+    //       });
+    //     }
+    //     if (data) {
+    //       await pubsub.publish("UPDATE_CART", {
+    //         updateCart: data,
+    //       });
+    //       return data;
+    //     }
+    //   }
+    // },
   },
 
   Subscription: {

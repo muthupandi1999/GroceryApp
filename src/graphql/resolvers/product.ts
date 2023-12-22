@@ -27,8 +27,8 @@ export default {
               ProductInventory: true,
               AddToCart: {
                 where: {
-                  userId: "655379d96144626a275e8a14",
-                  isOrder: false
+                  userId: "65642fcb264c4f37a0b129be",
+                  isOrder: false,
                 },
                 include: {
                   selectedVariant: true,
@@ -47,9 +47,10 @@ export default {
             },
           },
           image: true,
+          ProductInventory: true,
         },
       });
-      // console.dir(product?.variant, { depth: null });
+      //console.dir(product?.variant, { depth: null });
       return product;
     },
     getAllProducts: async (
@@ -83,7 +84,7 @@ export default {
               ProductInventory: true,
               AddToCart: {
                 where: {
-                  userId: "655379d96144626a275e8a14",
+                  userId: "65642fcb264c4f37a0b129be",
                   isOrder: false,
                 },
                 include: {
@@ -112,7 +113,7 @@ export default {
         // take: pageSize,
         // skip: (pageNumber - 1) * pageSize,
       });
-      // console.dir(allproducts[0], { depth: null });
+      //console.dir(allproducts[0], { depth: null });
       // pubsub.publish('PRODUCT_UPDATED', { productUpdated: allproducts });
       return allproducts;
     },
@@ -143,6 +144,7 @@ export default {
         );
 
         let imageList: string[] = await Promise.all(imageListPromises);
+        //console.log("🚀 ~ file: product.ts:86 ~ imageList:", imageList);
 
         let units = input.variant?.map(async (e: any) => {
           let data = await prisma.variants.create({
@@ -166,7 +168,7 @@ export default {
           },
         });
 
-        // console.log(addOnResults);
+        //console.log(addOnResults);
 
         return await prisma.products.create({
           data: {
@@ -300,7 +302,7 @@ export default {
 
         let updatedUnitData: any;
         if (units) {
-          console.log("units");
+          //console.log("units");
           const updatedUnits = units.map(async (e: any) => {
             if (e.id) {
               // If the unit has an ID, it's an existing unit, so update it
@@ -334,7 +336,7 @@ export default {
         //   ...restInput,
         // };
 
-        // console.log(updatedProduct);
+        // //console.log(updatedProduct);
         let updatedProduct = await prisma.products.update({
           where: { id },
           data: {
@@ -348,7 +350,7 @@ export default {
                 ProductInventory: true,
                 AddToCart: {
                   where: {
-                    userId: "655379d96144626a275e8a14",
+                    userId: "65642fcb264c4f37a0b129be",
                   },
                   include: {
                     selectedVariant: true,
@@ -381,7 +383,7 @@ export default {
     },
 
     deleteProduct: async (_: any, { id }: { id: string }, context: any) => {
-      //   console.log(id, "_____id222");
+      //   //console.log(id, "_____id222");
       //   let status = await verifyToken_api(context.token);
       //   if (status && status?.res?.role.includes("admin")) {
       let status = await verifyToken_api(context.token);
@@ -457,6 +459,6 @@ export default {
 //       id: "desc",
 //     },
 //   });
-//   console.dir(allproducts[0], { depth: null });
+//   //console.dir(allproducts[0], { depth: null });
 
 // }

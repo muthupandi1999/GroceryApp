@@ -57,7 +57,7 @@ export const photoUpload = async (base64String: string): Promise<string > => {
     // Generate a unique identifier for the image
     const publicId = uuidv4();
 
-    // console.log("base64String", base64String);
+    // //console.log("base64String", base64String);
     if (base64String != undefined) {
       // Upload the image to Cloudinary
       const uploadResult = await cloudinary.uploader.upload(base64String, {
@@ -66,7 +66,7 @@ export const photoUpload = async (base64String: string): Promise<string > => {
         overwrite: true, // Set to true to overwrite if the image already exists
       });
 
-      // console.log("uploadResult", uploadResult);
+      // //console.log("uploadResult", uploadResult);
 
       // Return the URL of the uploaded image
       return uploadResult.secure_url;

@@ -24,7 +24,7 @@ export const connectRedis = async() => {
         //     client.once('connect', resolve)
         // })
 
-        console.log('Connected to Redis');
+        //console.log('Connected to Redis');
         
     }
 }

@@ -53,6 +53,7 @@ export const addSellingCount = async (addToCart: any) => {
       quantity: true,
     },
   });
+  //console.log("🚀 ~ file: common.ts:53 ~ addSellingCount ~ carts:", carts);
   carts.forEach(async (item: any) => {
     await prisma.products.update({
       where: { id: item.productId },
@@ -87,6 +88,7 @@ export const updateProductInventory = async (
       variantInfo,
       item.quantity
     );
+    //console.log("🚀 ~ file: productInventory.ts:53 ~ minusStock:", minusStock);
 
     let productInventory = await prisma.productInventory.findFirst({
       where: {
@@ -130,7 +132,7 @@ const pushNotificationMessage = async (productInventory: any) => {
     productInventory &&
     productInventory?.availableStock <= productInventory?.minimumAvailableStock
   ) {
-    console.log("vanakam da mapla push notification la erunthu");
+    //console.log("vanakam da mapla push notification la erunthu");
     const notificationData = {
       data: {
         // Specify your data fields here
@@ -454,7 +456,7 @@ const getEstimateDelivery = async (branchId: string, destinationId: string) => {
       return data?.duration;
     }
   } catch (e) {
-    console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
+    //console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
   }
 };
 
@@ -478,10 +480,10 @@ const checkEstimateDelivery = async (destinationId: string) => {
       const durationB = parseDuration(b.duration);
       return durationA - durationB;
     });
-    
+  
     return result[0];
   } catch (e) {
-    console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
+    //console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
   }
 };
 
