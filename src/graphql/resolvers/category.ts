@@ -49,7 +49,7 @@ export default {
           },
         },
       });
-      console.dir(allCategories[0], { depth: null });
+      // console.dir(allCategories[0], { depth: null });
 
       const categoriesWithDefaultRoutes = allCategories.map((category: any) => {
         const defaultProductType = category.productTypes[0]; // Grabbing the first product type for the default route
@@ -70,7 +70,7 @@ export default {
       { id, sliceCount }: { id: string; sliceCount?: number },
       context: any
     ) => {
-      console.log("slice", sliceCount);
+      // console.log("slice", sliceCount);
       const category = await prisma.productCategory.findUnique({
         where: { id },
         include: {

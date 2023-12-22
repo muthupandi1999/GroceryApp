@@ -28,6 +28,7 @@ export default {
               AddToCart: {
                 where: {
                   userId: "655379d96144626a275e8a14",
+                  isOrder: false
                 },
                 include: {
                   selectedVariant: true,
@@ -48,7 +49,7 @@ export default {
           image: true,
         },
       });
-      console.dir(product?.variant, { depth: null });
+      // console.dir(product?.variant, { depth: null });
       return product;
     },
     getAllProducts: async (
@@ -111,7 +112,7 @@ export default {
         // take: pageSize,
         // skip: (pageNumber - 1) * pageSize,
       });
-      console.dir(allproducts[0], { depth: null });
+      // console.dir(allproducts[0], { depth: null });
       // pubsub.publish('PRODUCT_UPDATED', { productUpdated: allproducts });
       return allproducts;
     },
@@ -142,7 +143,6 @@ export default {
         );
 
         let imageList: string[] = await Promise.all(imageListPromises);
-        console.log("🚀 ~ file: product.ts:86 ~ imageList:", imageList);
 
         let units = input.variant?.map(async (e: any) => {
           let data = await prisma.variants.create({
@@ -166,7 +166,7 @@ export default {
           },
         });
 
-        console.log(addOnResults);
+        // console.log(addOnResults);
 
         return await prisma.products.create({
           data: {
