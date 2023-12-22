@@ -168,52 +168,7 @@ export default {
         await pubsub.publish("ADD_CART", {
           addCart: addProductOnCart,
         });
-<<<<<<< HEAD
-        return AddToCartproduct;
-      } else {
-        let productInfo = await prisma.products.findUnique({
-          where: { id: productId },
-          select: { variant: true },
-        });
-
-        const selectedVariant = productInfo?.variant.find(
-          (e: any) => e.id === selectedVariantId
-        );
-
-        if (productInfo && selectedVariant) {
-          let addProductOnCart = await prisma.addToCart.create({
-            data: {
-              product: { connect: { id: productId } },
-              quantity: quantity,
-              totalPrice: selectedVariant.price * quantity,
-              selectedVariant: { connect: { id: selectedVariant.id } },
-              ...(userId ? { user: { connect: { id: userId } } } : {}),
-              ...(deviceToken ? { deviceToken: deviceToken } : {}),
-            },
-            include: {
-              product: {
-                include: {
-                  ProductType: true,
-                  image: true,
-                  variant: { include: { ProductInventory: true } },
-                },
-              },
-              selectedVariant: true,
-              user: {
-                include: { Address: true },
-              },
-            },
-          });
-
-          // console.log("4545", addProductOnCart);
-          await pubsub.publish("ADD_CART", {
-            addCart: addProductOnCart,
-          });
-          return addProductOnCart;
-        }
-=======
         return addProductOnCart;
->>>>>>> d81c5f21fcf6ff9ce39790b63dfe695e42230951
       }
 
       // throw createGraphQLError("product not found", 404);
@@ -297,13 +252,6 @@ export default {
             },
           },
         });
-<<<<<<< HEAD
-        if (quantity <= 0) {
-          await prisma.addToCart.delete({
-            where: { id: cartsExists.id },
-          });
-        }
-=======
         console.log("check", cartsExists.quantity)
         // let checkQuantity = cartsExists.quantity + quantity;
         // //console.log("checkQuantity", cartsExists.quantity)
@@ -312,7 +260,6 @@ export default {
         //     where: { id: cartsExists.id },
         //   });
         // }
->>>>>>> d81c5f21fcf6ff9ce39790b63dfe695e42230951
         if (data) {
           await pubsub.publish("UPDATE_CART", {
             updateCart: data,
