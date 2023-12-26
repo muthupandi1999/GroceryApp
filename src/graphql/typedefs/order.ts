@@ -101,6 +101,7 @@ type getEstimateDeliveryTimeResponse{
 }
 
 type Query{
+    getAllOrder:[Order]
     getOrder(orderId:String!):Order!
     getUserOrder(userId:String):[Order]
     getEstimateDeliveryTime(from:String!,to:String!):getEstimateDeliveryTimeResponse
