@@ -480,7 +480,7 @@ const checkEstimateDelivery = async (destinationId: string) => {
       const durationB = parseDuration(b.duration);
       return durationA - durationB;
     });
-  
+
     return result[0];
   } catch (e) {
     //console.log("🚀 ~ file: common.ts:455 ~ getEstimateDelviery ~ e:", e);
@@ -583,3 +583,13 @@ export const sortBy = (filters: string, products: any) => {
       return (sortedProducts = products);
   }
 };
+function padTo2Digits(num: number) {
+  return num.toString().padStart(2, '0');
+}
+export function formatDate(date: any) {
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+  ].join('-');
+}

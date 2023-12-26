@@ -325,6 +325,7 @@ model Order {
   id                String            @id @default(auto()) @map("_id") @db.ObjectId
   orderId           String
   orderTime         DateTime
+  orderDate         String
   orderType         OrderType?
   orderStatus       OrderStatus       @default(PENDING)
   address           Address?          @relation(fields: [deliveryAddressId], references: [id])

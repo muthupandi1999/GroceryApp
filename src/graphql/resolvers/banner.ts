@@ -17,7 +17,7 @@ export default {
           ...banner,
           ProductType: {
             ...banner.ProductType,
-            defaultRoute: `/category/${banner?.ProductType?.productCategory?.name}/${banner?.ProductType?.productCategory?.id}/${banner?.ProductType?.id}`,
+            defaultRoute: `/productType/${banner?.ProductType?.productCategory?.id}/${banner?.ProductType?.id}`,
             productCategory: {
               ...banner.ProductType.productCategory,
             },

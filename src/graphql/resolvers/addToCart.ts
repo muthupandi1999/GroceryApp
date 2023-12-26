@@ -72,6 +72,9 @@ export default {
         where: {
           userId,
           isOrder: false,
+          quantity: {
+            gt: 0,
+          },
         },
       });
       if (totalCarts) {
@@ -252,20 +255,58 @@ export default {
             },
           },
         });
-        console.log("quauntitu123", quantity);
-        // console.log("check", cartsExists?.quantity)
-        // let checkQuantity = cartsExists.quantity + quantity;
-        // console.log("checkQuantity", checkQuantity)
-        if (quantity <= 0) {
-          await prisma.addToCart.delete({
-            where: { id: cartsExists.id },
+        console.log("check", data.quantity)
+        console.log("updateAddToCart: ~ data.quantity <= 0:", data.quantity <= 0)
+        if (data.quantity <= 0) {
+          console.log("🚀 ~ file: addToCart.ts:263 ~ updateAddToCart: ~ data.id:", data.id)
+          let deletedData = await prisma.addToCart.delete({
+            where: { id: data.id },
           });
+          console.log(deletedData, "________deletedData")
         }
         if (data) {
           await pubsub.publish("UPDATE_CART", {
             updateCart: data,
           });
           return data;
+        }
+      } else {
+        //new
+        let productInfo = await prisma.products.findUnique({
+          where: { id: productId },
+          select: { variant: true },
+        });
+
+        const selectedVariant = productInfo?.variant.find(
+          (e: any) => e.id === variantId
+        );
+
+        if (productInfo && selectedVariant) {
+          let addProductOnCart = await prisma.addToCart.create({
+            data: {
+              product: { connect: { id: productId } },
+              quantity: quantity,
+              totalPrice: selectedVariant.price * quantity,
+              selectedVariant: { connect: { id: selectedVariant.id } },
+              ...(userId ? { user: { connect: { id: userId } } } : {}),
+              // ...(deviceToken ? { deviceToken: deviceToken } : {}),
+            },
+            include: {
+              product: {
+                include: {
+                  ProductType: true,
+                  image: true,
+                  variant: { include: { ProductInventory: true } },
+                },
+              },
+              selectedVariant: true,
+              user: {
+                include: { Address: true },
+              },
+            },
+          });
+          return addProductOnCart;
+          //new
         }
       }
     },

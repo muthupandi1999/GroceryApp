@@ -10,18 +10,52 @@ import {
   updateAddToCart,
   updateProductInventory,
   createStripeCustomer,
+  formatDate
 } from "../../utils/common";
 import { Address } from "../../types/address.type";
 
 export default {
   Query: {
+    getAllOrder: async (_: any) => {
+      let order = await prisma.order.findMany({
+        include: {
+          addToCart: { include: { product: { include: { image: true } }, selectedVariant: true, } },
+          coupon: true,
+          user: true,
+          address: true,
+          branch: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+      var today = new Date();
+      var priorDate = new Date(new Date().setDate(today.getDate() - 30));
+      priorDate.setHours(0, 0, 0, 0);
+      let check = await prisma.order.groupBy({
+        where: {
+          orderTime: {
+            gte: priorDate,
+          },
+        },
+        by: ['orderDate'],
+        _sum: {
+          orderAmount: true,
+        },
+        orderBy: {
+          orderDate: 'desc',
+        },
+      })
+      console.log("🚀 ~ file: order.ts:41 ~ getAllOrder: ~ check:", check)
+      return order;
+    },
     getOrder: async (_: any, { orderId }: { orderId: string }) => {
       let order = await prisma.order.findUnique({
         where: {
           id: orderId,
         },
         include: {
-          addToCart: { include: { product: {include:{image:true}}, selectedVariant: true,  } },
+          addToCart: { include: { product: { include: { image: true } }, selectedVariant: true, } },
           coupon: true,
           user: true,
           address: true,
@@ -46,7 +80,7 @@ export default {
             //total order price calculation
             let orderAmount =
               cartData[i].quantity *
-              (cartData[i].selectedVariant?.price ?? 0) 
+              (cartData[i].selectedVariant?.price ?? 0)
             orderPrice += orderAmount
 
           }
@@ -126,6 +160,7 @@ export default {
             data: {
               orderId: orderId,
               orderTime: new Date(),
+              orderDate: formatDate(new Date()),
               orderType: orderType,
               address: address
                 ? {
@@ -167,6 +202,7 @@ export default {
           };
         }
       } catch (e) {
+        console.log("🚀 ~ file: order.ts:194 ~ placeOrder: ~ e:", e)
         return {
           status: false,
           paymentType: "ERROR",

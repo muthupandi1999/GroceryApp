@@ -4,7 +4,10 @@ import { sign, verify } from "jsonwebtoken";
 import { generateOTP, verifyOtpWithSecret } from "../../helpers/otpGenerate";
 import * as EmailValidator from "email-validator";
 import user from "../typedefs/user";
-import { JwtPayload, updateUserInput } from "../../types/user.type";
+import {
+  JwtPayload,
+  updateUserInput,
+} from "../../types/user.type";
 import { photoUpload } from "../../helpers/cloudnary.photoUpload";
 import { sendMail } from "../../utils/common";
 
@@ -16,8 +19,8 @@ export default {
           id: userId,
         },
         include: {
-          Address: true,
-        },
+          Address: true
+        }
       });
       // //console.dir(user, { depth: null })
       if (user) {
@@ -29,13 +32,14 @@ export default {
     getUsers: async () => {
       let users = await prisma.user.findMany({
         include: {
-          Address: true,
-        },
+          Address: true
+        }
       });
       return users;
     },
   },
   Mutation: {
+
     // loginViaEmail(email: String!): otpStatus
     // loginEmailOtpValidation(email:String!, otp:String!):userLoginStatus
     // loginViaEmail: async (_: any, { email }: { email: string }) => {
@@ -189,101 +193,97 @@ export default {
         where: { phoneNo: phoneNo },
       });
 
-      console.log("existData", existData);
+      let limit = existData!.countLimit;
 
-      if (existData) {
-        let limit = existData!.countLimit;
+      if (limit < 5) {
+        let otpValid = verifyOtpWithSecret(existData!.secret, otp);
 
-        if (limit < 5) {
-          let otpValid = verifyOtpWithSecret(existData!.secret, otp);
+        if (!otpValid) {
+          await prisma.otpValidationPhone.update({
+            where: {
+              id: existData?.id,
+            },
+            data: {
+              countLimit: limit + 1,
+            },
+          });
 
-          if (!otpValid) {
-            await prisma.otpValidationPhone.update({
+          throw createGraphQLError(
+            `you have a ${4 - limit} remaining attempt`,
+            400
+          );
+        } else {
+          let deleteOtp = await prisma.otpValidationPhone.delete({
+            where: { id: existData?.id },
+          });
+          if (deleteOtp) {
+            let userExist = await prisma.user.findUnique({
               where: {
-                id: existData?.id,
-              },
-              data: {
-                countLimit: limit + 1,
+                phoneNo: phoneNo,
               },
             });
-
-            throw createGraphQLError(
-              `you have a ${4 - limit} remaining attempt`,
-              400
-            );
-          } else {
-            let deleteOtp = await prisma.otpValidationPhone.delete({
-              where: { id: existData?.id },
-            });
-            if (deleteOtp) {
-              let userExist = await prisma.user.findUnique({
-                where: {
+            if (!userExist) {
+              let user = await prisma.user.create({
+                data: {
                   phoneNo: phoneNo,
                 },
               });
-              if (!userExist) {
-                let user = await prisma.user.create({
-                  data: {
-                    phoneNo: phoneNo,
-                  },
-                });
-                let accessToken = sign(
-                  { id: user.id, email: user.phoneNo, role: user.role },
-                  "secret",
-                  {
-                    expiresIn: "1h",
-                  }
-                );
+              let accessToken = sign(
+                { id: user.id, email: user.phoneNo, role: user.role },
+                "secret",
+                {
+                  expiresIn: "1h",
+                }
+              );
 
-                let refreshToken = sign(
-                  { id: user.id, email: user.email, role: user.role },
-                  "secret",
-                  { expiresIn: "1d" }
-                );
+              let refreshToken = sign(
+                { id: user.id, email: user.email, role: user.role },
+                "secret",
+                { expiresIn: "1d" }
+              );
 
-                return {
-                  message: "Login successfully",
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  data: user,
-                };
-              } else {
-                let accessToken = sign(
-                  {
-                    id: userExist.id,
-                    email: userExist.phoneNo,
-                    role: userExist.role,
-                  },
-                  "secret",
-                  {
-                    expiresIn: "1h",
-                  }
-                );
+              return {
+                message: "Login successfully",
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                data: user,
+              };
+            } else {
+              let accessToken = sign(
+                {
+                  id: userExist.id,
+                  email: userExist.phoneNo,
+                  role: userExist.role,
+                },
+                "secret",
+                {
+                  expiresIn: "1h",
+                }
+              );
 
-                let refreshToken = sign(
-                  {
-                    id: userExist.id,
-                    email: userExist.phoneNo,
-                    role: userExist.role,
-                  },
-                  "secret",
-                  { expiresIn: "1d" }
-                );
-                return {
-                  message: "Login successfully",
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  data: userExist,
-                };
-              }
+              let refreshToken = sign(
+                {
+                  id: userExist.id,
+                  email: userExist.phoneNo,
+                  role: userExist.role,
+                },
+                "secret",
+                { expiresIn: "1d" }
+              );
+              return {
+                message: "Login successfully",
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                data: user,
+              };
             }
           }
-        } else {
-          throw createGraphQLError(
-            `you have reached the maximum number of attempt, Try again`,
-            400
-          );
         }
+      } else {
+        throw createGraphQLError(
+          `you have reached the maximum number of attempt, Try again`,
+          400
+        );
       }
     },
     updateUserProfile: async (
@@ -320,7 +320,7 @@ export default {
             ...(addressInput
               ? { Address: { connect: { id: addressCreate.id } } }
               : {}),
-          };
+          }
         }
         let updateUser = await prisma.user.update({
           where: {
@@ -329,8 +329,8 @@ export default {
 
           data: userProfileUpdate,
           include: {
-            Address: true,
-          },
+            Address: true
+          }
         });
         if (updateUser) {
           return {
@@ -347,7 +347,7 @@ export default {
       if (emailVerify) {
         const { otp, secret } = await generateOTP();
         //SEND MAIL OTP
-        sendMail(email, otp);
+        sendMail(email, otp)
         await prisma.otpValidationEmail.create({
           data: {
             email: email,
@@ -466,6 +466,7 @@ export default {
             `you have a ${4 - limit} remaining attempt`,
             400
           );
+
         } else {
           let deleteOtp = await prisma.otpValidationPhone.delete({
             where: { id: existData?.id },
@@ -517,7 +518,10 @@ export default {
       return accessToken;
     },
 
-    deleteUserAddress: async (_: any, { id }: { id: string }) => {
+    deleteUserAddress: async (
+      _: any,
+      { id }: { id: string }
+    ) => {
       let deleteCart = await prisma.address.delete({
         where: { id },
       });
@@ -527,6 +531,7 @@ export default {
           data: deleteCart,
         };
       }
-    },
+    }
+
   },
 };
