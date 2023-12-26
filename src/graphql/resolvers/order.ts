@@ -29,23 +29,24 @@ export default {
           createdAt: 'desc',
         },
       });
-      // var today = new Date();
-      // var priorDate = new Date(new Date().setDate(today.getDate() - 30));
-      // let check = await prisma.order.groupBy({
-      //   where: {
-      //     orderTime: {
-      //       gte: priorDate,
-      //     },
-      //   },
-      //   by: ['orderDate'],
-      //   _sum: {
-      //     orderAmount: true,
-      //   },
-      //   orderBy: {
-      //     orderDate: 'desc',
-      //   },
-      // })
-      // console.log("🚀 ~ file: order.ts:41 ~ getAllOrder: ~ check:", check)
+      var today = new Date();
+      var priorDate = new Date(new Date().setDate(today.getDate() - 30));
+      priorDate.setHours(0, 0, 0, 0);
+      let check = await prisma.order.groupBy({
+        where: {
+          orderTime: {
+            gte: priorDate,
+          },
+        },
+        by: ['orderDate'],
+        _sum: {
+          orderAmount: true,
+        },
+        orderBy: {
+          orderDate: 'desc',
+        },
+      })
+      console.log("🚀 ~ file: order.ts:41 ~ getAllOrder: ~ check:", check)
       return order;
     },
     getOrder: async (_: any, { orderId }: { orderId: string }) => {
