@@ -100,11 +100,23 @@ type getEstimateDeliveryTimeResponse{
     EstimateTime:String
 }
 
+type MonthlyChartResponse  {
+    date:[String],
+    amount:[Int],
+    total:Int
+}
+
+type paginateOrder{
+    count: Int
+    data: [Order]
+}
+
 type Query{
-    getAllOrder:[Order]
+    getAllOrder(index:Int,limit:Int):paginateOrder
     getOrder(orderId:String!):Order!
     getUserOrder(userId:String):[Order]
     getEstimateDeliveryTime(from:String!,to:String!):getEstimateDeliveryTimeResponse
+    getMonthlyChart(days:Int!):MonthlyChartResponse
 }
 
 type Mutation {

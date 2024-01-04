@@ -1,5 +1,7 @@
 import { prisma } from "../../config/prisma.config";
 import axios from "axios";
+import moment from 'moment';
+
 const stripe = require("stripe")(
   "sk_test_51NjzQvSAjtfPsOjiGDrQ1QUxVwPTB8Tvc12f2l8Df0TKcc2e5j6wOcTxnMRl8x9bhIB5CFK8GrM5e4PdMhTijoxI00cORNXoOC"
 );
@@ -16,8 +18,8 @@ import { Address } from "../../types/address.type";
 
 export default {
   Query: {
-    getAllOrder: async (_: any) => {
-      let order = await prisma.order.findMany({
+    getAllOrder: async (_: any, { index, limit }: { index: number, limit: number }) => {
+      let matchQuery: any = {
         include: {
           addToCart: { include: { product: { include: { image: true } }, selectedVariant: true, } },
           coupon: true,
@@ -28,26 +30,19 @@ export default {
         orderBy: {
           createdAt: 'desc',
         },
-      });
-      var today = new Date();
-      var priorDate = new Date(new Date().setDate(today.getDate() - 30));
-      priorDate.setHours(0, 0, 0, 0);
-      let check = await prisma.order.groupBy({
-        where: {
-          orderTime: {
-            gte: priorDate,
-          },
-        },
-        by: ['orderDate'],
-        _sum: {
-          orderAmount: true,
-        },
-        orderBy: {
-          orderDate: 'desc',
-        },
-      })
-      console.log("🚀 ~ file: order.ts:41 ~ getAllOrder: ~ check:", check)
-      return order;
+      }
+      let count = await prisma.order.findMany(matchQuery);
+      if (index != null && limit != null) {
+        let take = limit;
+        let skip = (index - 1) * limit;
+        matchQuery["take"] = take;
+        matchQuery["skip"] = skip;
+      }
+      let order = await prisma.order.findMany(matchQuery);
+      return {
+        count: count.length,
+        data: order
+      };
     },
     getOrder: async (_: any, { orderId }: { orderId: string }) => {
       let order = await prisma.order.findUnique({
@@ -129,6 +124,50 @@ export default {
         };
       } catch (e) {
         return "something went wrong";
+      }
+    },
+    getMonthlyChart: async (_: any, { days }: { days: number }) => {
+      const currentDate = moment();
+      const sevenDaysAgo = currentDate.clone().subtract(days, 'days').startOf('day');
+      let check = await prisma.order.groupBy({
+        where: {
+          orderTime: {
+            gte: sevenDaysAgo.toDate(),
+            lte: currentDate.toDate(),
+          },
+        },
+        by: ['orderDate'],
+        _sum: {
+          orderAmount: true,
+        },
+        orderBy: {
+          orderDate: 'desc',
+        },
+      })
+      const transformedResult = check.map(item => ({
+        orderAmount: item._sum.orderAmount,
+        orderDate: moment(item.orderDate).format('MMMDD'),
+      }));
+      const DaysArr = Array.from({ length: days }, (_, index) =>
+        currentDate.clone().subtract(index, 'days').format('MMMDD')
+      ).reverse();
+      let amount: number[] = [];
+      for (let i = 0; i < DaysArr.length; i++) {
+        const searchObject = transformedResult.find((item) => item.orderDate == DaysArr[i]);
+        if (searchObject != undefined) {
+          amount.push(searchObject && searchObject?.orderAmount || 0)
+        } else {
+          amount.push(0)
+        }
+      }
+      let sum = 0;
+      for (let index = 0; index < amount.length; index++) {
+        sum += amount[index];
+      }
+      return {
+        date: DaysArr,
+        amount: amount,
+        total: sum
       }
     },
   },
@@ -247,3 +286,5 @@ export default {
     },
   },
 };
+
+
