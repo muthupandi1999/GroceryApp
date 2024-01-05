@@ -40,12 +40,18 @@ export default `
     name: String
     image: String
   }
+  type getCategoryChartResponse{
+    category: [String]
+    sellingCount: [Int]
+    total:Int
+  }
 
   type Query {
     getCategory(id: ID!): Category
     getCategoryWithProductTypes(id: ID!, sliceCount:Int): ProductTypeWithProducts
     getAllCategoryWithProductTypes:[ProductTypeWithProducts]
     getAllCategories: [Category]
+    getCategoryCharts:getCategoryChartResponse
   }
 
   type Mutation {

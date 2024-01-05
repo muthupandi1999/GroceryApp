@@ -37,7 +37,7 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "655379d96144626a275e8a14", isOrder:false },
+                        where: { userId: "655379d96144626a275e8a14", isOrder: false },
                         include: { selectedVariant: true },
                       },
                     },
@@ -83,7 +83,7 @@ export default {
                     include: {
                       ProductInventory: true,
                       AddToCart: {
-                        where: { userId: "655379d96144626a275e8a14", isOrder:false },
+                        where: { userId: "655379d96144626a275e8a14", isOrder: false },
                         include: {
                           selectedVariant: true,
                           product: {
@@ -139,7 +139,6 @@ export default {
           productTypes: {
             include: {
               products: {
-                take: 1,
                 include: {
                   image: true,
                   variant: {
@@ -172,6 +171,46 @@ export default {
       });
 
       return result;
+    },
+    getCategoryCharts: async (_: any, __: any, context: any) => {
+      const category = await prisma.productCategory.findMany({
+        include: {
+          productTypes: {
+            include: {
+              products: true
+            },
+          },
+        },
+      });
+      let categoryArr: any = [];
+      for (let i = 0; i < category.length; i++) {
+        let sum = 0;
+        for (let j = 0; j < category[i].productTypes.length; j++) {
+          for (let k = 0; k < category[i].productTypes[j].products.length; k++) {
+            let product = category[i].productTypes[j].products[k];
+            sum += product.sellingCount
+          }
+        }
+        categoryArr.push({
+          category: category[i]?.name,
+          sellingCount: sum
+        })
+      }
+      categoryArr.sort((a: any, b: any) => {
+        return b.sellingCount - a.sellingCount;
+      })
+      categoryArr = categoryArr.slice(0, 5);
+      let catArr:any = [], sellArr:any = [], total = 0;
+      for (let i = 0; i < categoryArr.length; i++) {
+        catArr.push(categoryArr[i].category)
+        sellArr.push(categoryArr[i].sellingCount)
+        total+=categoryArr[i].sellingCount
+      }
+      return {
+        category: catArr,
+        sellingCount: sellArr,
+        total
+      };
     },
   },
   Mutation: {
