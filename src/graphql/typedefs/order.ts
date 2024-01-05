@@ -124,6 +124,7 @@ type Query{
     getEstimateDeliveryTime(from:String!,to:String!):getEstimateDeliveryTimeResponse
     getMonthlyChart(days:Int!):MonthlyChartResponse
     getOrdersChart:OrderChartResponse
+    getSaleThisMonthChart:MonthlyChartResponse
 }
 
 type Mutation {

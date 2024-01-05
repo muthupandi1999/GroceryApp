@@ -215,9 +215,57 @@ export default {
       return {
         date: DaysArr,
         count: count,
-        total:sum
+        total: sum
       }
-    }
+    },
+    getSaleThisMonthChart: async (_: any, { days }: { days: number }) => {
+      const currentDate = moment();
+      const startOfMonth = moment().clone().startOf('month')
+      let check = await prisma.order.groupBy({
+        where: {
+          orderTime: {
+            gte: startOfMonth.toDate(),
+            lte: currentDate.toDate(),
+          },
+        },
+        by: ['orderDate'],
+        _sum: {
+          orderAmount: true,
+        },
+        orderBy: {
+          orderDate: 'desc',
+        },
+      })
+      const transformedResult = check.map(item => ({
+        orderAmount: item._sum.orderAmount,
+        orderDate: moment(item.orderDate).format('MMMDD'),
+      }));
+      const daysDifference = currentDate.diff(startOfMonth, 'days');
+      const DaysArr = Array.from({ length: daysDifference + 1 }, (_, index) =>
+        currentDate.clone().subtract(index, 'days').format('MMMDD')
+      ).reverse();
+      let amount: number[] = [];
+      for (let i = 0; i < DaysArr.length; i++) {
+        const searchObject = transformedResult.find((item) => item.orderDate == DaysArr[i]);
+        if (searchObject != undefined) {
+          amount.push(searchObject && searchObject?.orderAmount || 0)
+        } else {
+          // temporary data
+          const randomNum = Math.random() * 9000
+          const formattedRandomNum = Math.floor(randomNum)
+          amount.push(formattedRandomNum)
+        }
+      }
+      let sum = 0;
+      for (let index = 0; index < amount.length; index++) {
+        sum += amount[index];
+      }
+      return {
+        date: DaysArr,
+        amount: amount,
+        total: sum
+      }
+    },
   },
   Mutation: {
     placeOrder: async (_: any, { input }: any, context: any) => {
