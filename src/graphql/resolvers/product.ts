@@ -124,6 +124,46 @@ export default {
       });
       return variant;
     },
+    getTopSellingProducts: async (_: any) => {
+      let topSellingProducts = await prisma.products.findMany({
+        where: {
+          sellingCount: { gt: 0 }
+        },
+        include: {
+          ProductType: true,
+          variant: {
+            include: {
+              ProductInventory: true,
+              AddToCart: {
+                where: {
+                  userId: "655379d96144626a275e8a14",
+                  isOrder: false,
+                },
+                include: {
+                  selectedVariant: true,
+                  product: {
+                    include: {
+                      variant: {
+                        include: {
+                          AddToCart: { include: { selectedVariant: true } },
+                        },
+                      },
+                      image: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          image: true,
+          ProductInventory: true,
+        },
+        orderBy: {
+          sellingCount: "desc",
+        },
+      });
+      return topSellingProducts
+    }
   },
   Mutation: {
     createProduct: async (

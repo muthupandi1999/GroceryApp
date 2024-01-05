@@ -157,7 +157,10 @@ export default {
         if (searchObject != undefined) {
           amount.push(searchObject && searchObject?.orderAmount || 0)
         } else {
-          amount.push(0)
+          // temporary data
+          const randomNum = Math.random() * 9000
+          const formattedRandomNum = Math.floor(randomNum)
+          amount.push(formattedRandomNum)
         }
       }
       let sum = 0;
@@ -170,6 +173,51 @@ export default {
         total: sum
       }
     },
+    getOrdersChart: async (_: any) => {
+      const currentDate = moment();
+      const sevenDaysAgo = currentDate.clone().subtract(30, 'days').startOf('day');
+      let check = await prisma.order.groupBy({
+        where: {
+          orderTime: {
+            gte: sevenDaysAgo.toDate(),
+            lte: currentDate.toDate(),
+          },
+        },
+        by: ['orderDate'],
+        _count: {
+          _all: true,
+        },
+        orderBy: {
+          orderDate: 'desc',
+        },
+      })
+      const transformedResult = check.map(item => ({
+        count: item._count._all,
+        date: moment(item.orderDate).format('MMMDD'),
+      }));
+      const DaysArr = Array.from({ length: 30 }, (_, index) =>
+        currentDate.clone().subtract(index, 'days').format('MMMDD')
+      ).reverse();
+
+      let count: number[] = [];
+      for (let i = 0; i < DaysArr.length; i++) {
+        const searchObject = transformedResult.find((item) => item.date == DaysArr[i]);
+        if (searchObject != undefined) {
+          count.push(searchObject && searchObject?.count || 0)
+        } else {
+          count.push(0)
+        }
+      }
+      let sum = 0;
+      for (let index = 0; index < count.length; index++) {
+        sum += count[index];
+      }
+      return {
+        date: DaysArr,
+        count: count,
+        total:sum
+      }
+    }
   },
   Mutation: {
     placeOrder: async (_: any, { input }: any, context: any) => {

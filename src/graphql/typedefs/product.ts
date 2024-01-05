@@ -76,6 +76,7 @@ export default `
     isActive: Boolean
     ProductType:ProductType           
     productTypeId: String
+    sellingCount:Int
    
   }
 
@@ -107,6 +108,7 @@ export default `
     getProduct(id: ID!): Products
     getAllProducts(filter:String): [Products]
     getProductVariant(id:ID!):variants
+    getTopSellingProducts:[Products]
   }
 
   type Mutation {
