@@ -362,14 +362,14 @@ export const getCustomers = () => {
 
 export const getTotalSubscribe = () => {
     return new Promise(async (resolve) => {
-        let count = await prisma.user.count({
-            where: {
-                "isActive": true
-            }
-        });
+        // let count = await prisma.user.count({
+        //     where: {
+        //         "isActive": true
+        //     }
+        // });
         resolve({
             label: orderLabelArr.totalsubscribers,
-            count: count.toString()
+            count: 0
         });
     })
 }
