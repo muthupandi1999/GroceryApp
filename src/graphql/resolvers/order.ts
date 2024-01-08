@@ -1,7 +1,9 @@
 import { prisma } from "../../config/prisma.config";
 import axios from "axios";
 import moment from 'moment';
-
+import {
+  allOrdersFunctions
+} from '../../services/order.service';
 const stripe = require("stripe")(
   "sk_test_51NjzQvSAjtfPsOjiGDrQ1QUxVwPTB8Tvc12f2l8Df0TKcc2e5j6wOcTxnMRl8x9bhIB5CFK8GrM5e4PdMhTijoxI00cORNXoOC"
 );
@@ -205,7 +207,11 @@ export default {
         if (searchObject != undefined) {
           count.push(searchObject && searchObject?.count || 0)
         } else {
-          count.push(0)
+          // count.push(0)
+          // temporary data
+          const randomNum = Math.random() * 9000
+          const formattedRandomNum = Math.floor(randomNum)
+          count.push(formattedRandomNum)
         }
       }
       let sum = 0;
@@ -240,20 +246,18 @@ export default {
         orderAmount: item._sum.orderAmount,
         orderDate: moment(item.orderDate).format('MMMDD'),
       }));
-      const daysDifference = currentDate.diff(startOfMonth, 'days');
+      const endOfMonth = moment().clone().endOf('month')
+      const daysDifference = endOfMonth.diff(startOfMonth, 'days');
       const DaysArr = Array.from({ length: daysDifference + 1 }, (_, index) =>
-        currentDate.clone().subtract(index, 'days').format('MMMDD')
-      ).reverse();
+        startOfMonth.clone().add(index, 'days').format('MMMDD')
+      );
       let amount: number[] = [];
       for (let i = 0; i < DaysArr.length; i++) {
         const searchObject = transformedResult.find((item) => item.orderDate == DaysArr[i]);
         if (searchObject != undefined) {
           amount.push(searchObject && searchObject?.orderAmount || 0)
         } else {
-          // temporary data
-          const randomNum = Math.random() * 9000
-          const formattedRandomNum = Math.floor(randomNum)
-          amount.push(formattedRandomNum)
+          amount.push(0)
         }
       }
       let sum = 0;
@@ -266,6 +270,10 @@ export default {
         total: sum
       }
     },
+    getOrderDetailsCount: async (_: any) => {
+      const results = await Promise.all(allOrdersFunctions.map(func => func()));
+      return results
+    }
   },
   Mutation: {
     placeOrder: async (_: any, { input }: any, context: any) => {

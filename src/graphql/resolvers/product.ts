@@ -55,13 +55,14 @@ export default {
     },
     getAllProducts: async (
       _: any,
-      { filter }: { filter?: string },
+      { filter, limit, index }: { filter?: string, limit: number, index: number },
       context: any
     ) => {
       // const pageSize = 5;
       // const pageNumber = 1;
       let allproducts = await prisma.products.findMany({
         where: {
+          isActive: true,
           OR: [
             {
               name: {
@@ -78,7 +79,11 @@ export default {
           ],
         },
         include: {
-          ProductType: true,
+          ProductType: {
+            include: {
+              productCategory: true
+            }
+          },
           variant: {
             include: {
               ProductInventory: true,
@@ -110,12 +115,90 @@ export default {
         orderBy: {
           id: "desc",
         },
-        // take: pageSize,
-        // skip: (pageNumber - 1) * pageSize,
+        take: limit,
+        skip: (index - 1) * limit,
       });
       //console.dir(allproducts[0], { depth: null });
       // pubsub.publish('PRODUCT_UPDATED', { productUpdated: allproducts });
-      return allproducts;
+      let counProducts = await prisma.products.findMany({ where: { isActive: true } });
+      return {
+        count: counProducts.length,
+        data: allproducts
+      }
+      // return allproducts;
+    },
+    getAllProductsByAdmin: async (
+      _: any,
+      { filter, limit, index }: { filter?: string, limit: number, index: number },
+      context: any
+    ) => {
+      // const pageSize = 5;
+      // const pageNumber = 1;
+      let allproducts = await prisma.products.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: filter ? filter : "",
+                mode: "insensitive",
+              },
+            },
+            // {
+            //   shortDescription: {
+            //     contains: filter ? filter : "",
+            //     mode: "insensitive",
+            //   },
+            // },
+          ],
+        },
+        include: {
+          ProductType: {
+            include: {
+              productCategory: true
+            }
+          },
+          variant: {
+            include: {
+              ProductInventory: true,
+              AddToCart: {
+                where: {
+                  userId: "655379d96144626a275e8a14",
+                  isOrder: false,
+                },
+                include: {
+                  selectedVariant: true,
+                  product: {
+                    include: {
+                      variant: {
+                        include: {
+                          AddToCart: { include: { selectedVariant: true } },
+                        },
+                      },
+                      image: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          image: true,
+          ProductInventory: true,
+          // AddToCart: { include: { user: true, selectedVariant: true } },
+        },
+        orderBy: {
+          id: "desc",
+        },
+        take: limit,
+        skip: (index - 1) * limit,
+      });
+      //console.dir(allproducts[0], { depth: null });
+      // pubsub.publish('PRODUCT_UPDATED', { productUpdated: allproducts });
+      let counProducts = await prisma.products.findMany({});
+      return {
+        count: counProducts.length,
+        data: allproducts
+      }
+      // return allproducts;
     },
     getProductVariant: async (_: any, { id }: { id: string }) => {
       let variant = await prisma.variants.findUnique({
@@ -130,7 +213,11 @@ export default {
           sellingCount: { gt: 0 }
         },
         include: {
-          ProductType: true,
+          ProductType: {
+            include: {
+              productCategory: true
+            }
+          },
           variant: {
             include: {
               ProductInventory: true,

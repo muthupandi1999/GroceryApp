@@ -117,6 +117,11 @@ type paginateOrder{
     data: [Order]
 }
 
+type orderDetailsResponse{
+    label:String!
+    count:String!
+}
+
 type Query{
     getAllOrder(index:Int,limit:Int):paginateOrder
     getOrder(orderId:String!):Order!
@@ -125,6 +130,7 @@ type Query{
     getMonthlyChart(days:Int!):MonthlyChartResponse
     getOrdersChart:OrderChartResponse
     getSaleThisMonthChart:MonthlyChartResponse
+    getOrderDetailsCount:[orderDetailsResponse]
 }
 
 type Mutation {

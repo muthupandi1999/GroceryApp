@@ -104,9 +104,15 @@ export default `
     description: [productDetailsInput!]
   }
 
+ type paginateResponse {
+    count: Int
+    data: [Products]
+  }
+
   type Query {
     getProduct(id: ID!): Products
-    getAllProducts(filter:String): [Products]
+    getAllProducts(filter:String,limit: Int!, index: Int!): paginateResponse
+    getAllProductsByAdmin(filter:String,limit: Int!, index: Int!): paginateResponse
     getProductVariant(id:ID!):variants
     getTopSellingProducts:[Products]
   }
