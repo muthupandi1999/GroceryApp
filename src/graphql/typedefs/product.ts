@@ -112,7 +112,7 @@ export default `
   type Query {
     getProduct(id: ID!): Products
     getAllProducts(filter:String,limit: Int!, index: Int!): paginateResponse
-    getAllProductsByAdmin(filter:String,limit: Int!, index: Int!): paginateResponse
+    getAllProductsByAdmin(category:String,status:Boolean,search:String,limit: Int!, index: Int!): paginateResponse
     getProductVariant(id:ID!):variants
     getTopSellingProducts:[Products]
   }

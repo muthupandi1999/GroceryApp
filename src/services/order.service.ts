@@ -198,7 +198,7 @@ export const getTodayPendingEarningOrders = () => {
             });
         } else {
             resolve({
-                label: orderLabelArr.todaysearnings,
+                label: orderLabelArr.todayspendingearnings,
                 count: `₹0`
             });
         }
@@ -227,7 +227,7 @@ export const getThisYearEarningOrders = () => {
             });
         } else {
             resolve({
-                label: orderLabelArr.todaysearnings,
+                label: orderLabelArr.thisyearearning,
                 count: `₹0`
             });
         }

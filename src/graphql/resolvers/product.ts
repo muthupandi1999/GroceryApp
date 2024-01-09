@@ -129,28 +129,34 @@ export default {
     },
     getAllProductsByAdmin: async (
       _: any,
-      { filter, limit, index }: { filter?: string, limit: number, index: number },
+      { category, status, search, limit, index }: { category?: string, status?: boolean, search?: string, limit: number, index: number },
       context: any
     ) => {
-      // const pageSize = 5;
-      // const pageNumber = 1;
-      let allproducts = await prisma.products.findMany({
-        where: {
-          OR: [
-            {
-              name: {
-                contains: filter ? filter : "",
-                mode: "insensitive",
-              },
+      let matchQuery: any = {
+        OR: [
+          {
+            name: {
+              contains: search ? search : "",
+              mode: "insensitive",
             },
-            // {
-            //   shortDescription: {
-            //     contains: filter ? filter : "",
-            //     mode: "insensitive",
-            //   },
-            // },
-          ],
-        },
+          }
+        ],
+      }
+      if (status != undefined) {
+        matchQuery["isActive"] = status;
+      }
+      if (category != undefined) {
+        matchQuery["ProductType"] = {
+          productCategory: {
+            name: category,
+          },
+        };
+      }
+
+      // console.dir(matchQuery, { depth: null })
+
+      let allproducts = await prisma.products.findMany({
+        where: matchQuery,
         include: {
           ProductType: {
             include: {
@@ -183,7 +189,6 @@ export default {
           },
           image: true,
           ProductInventory: true,
-          // AddToCart: { include: { user: true, selectedVariant: true } },
         },
         orderBy: {
           id: "desc",
@@ -191,14 +196,12 @@ export default {
         take: limit,
         skip: (index - 1) * limit,
       });
-      //console.dir(allproducts[0], { depth: null });
-      // pubsub.publish('PRODUCT_UPDATED', { productUpdated: allproducts });
-      let counProducts = await prisma.products.findMany({});
+
+      let counProducts = await prisma.products.findMany({ where: matchQuery });
       return {
         count: counProducts.length,
         data: allproducts
       }
-      // return allproducts;
     },
     getProductVariant: async (_: any, { id }: { id: string }) => {
       let variant = await prisma.variants.findUnique({
