@@ -101,6 +101,7 @@ export default `
     variant: [variantUpdateInput]
     shortDescription: String
     tag:String
+    isActive:Boolean
     description: [productDetailsInput!]
   }
 

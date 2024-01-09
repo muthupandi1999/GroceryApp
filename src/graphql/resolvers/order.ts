@@ -159,10 +159,7 @@ export default {
         if (searchObject != undefined) {
           amount.push(searchObject && searchObject?.orderAmount || 0)
         } else {
-          // temporary data
-          const randomNum = Math.random() * 9000
-          const formattedRandomNum = Math.floor(randomNum)
-          amount.push(formattedRandomNum)
+          amount.push(0)
         }
       }
       let sum = 0;
@@ -207,11 +204,7 @@ export default {
         if (searchObject != undefined) {
           count.push(searchObject && searchObject?.count || 0)
         } else {
-          // count.push(0)
-          // temporary data
-          const randomNum = Math.random() * 9000
-          const formattedRandomNum = Math.floor(randomNum)
-          count.push(formattedRandomNum)
+          count.push(0)
         }
       }
       let sum = 0;
