@@ -52,7 +52,7 @@ const writeFileAsync = promisify(fs.writeFile);
 //   }
 // };
 
-export const photoUpload = async (base64String: string): Promise<string > => {
+export const photoUpload = async (base64String: string): Promise<string> => {
   try {
     // Generate a unique identifier for the image
     const publicId = uuidv4();
